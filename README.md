@@ -1,6 +1,6 @@
-# ミーチューブ
+# MeTube
 
-### ユーチューブをクローンしたウェブサイト（ver. 2021）
+## ユーチューブをクローンしたウェブサイト（ver. 2021）
 
 このプロジェクトで利用した技術スタック
 
@@ -16,19 +16,23 @@
   - CodeBuild (using build docker)
   - CodeDeploy (deploy to ECR)
 
-### Dockerfile
+## Dockerfile
 
-##### ビルドコマンド
+#####ビルドコマンド
 
-- docker image build . -t (accountName)/(imageName)
+```bash
+$ docker image build . -t <accountName>/<imageName>
+```
 
-##### 起動コマンド
+#####起動コマンド
 
-- docker container run -p (hostPort):4000 -d (accountName)/(imageName)
+```bash
+$ docker container run -p <hostPort>:4000 -d <accountName>/<imageName>
+```
 
-### Routers ToDo
+## Routers
 
-##### グローバル
+#####グローバル
 
 - [x] / &ensp;：&ensp; ホームページ
 - [x] /join &ensp;：&ensp; 会員登録
@@ -37,13 +41,13 @@
 
 ##### ユーザー
 
-- [x] /users/edit &ensp;：&ensp; 検索
-- [x] /users/delete &ensp;：&ensp; 検索
+- [x] /users/edit &ensp;：&ensp; ユーザー編集
+- [x] /users/delete &ensp;：&ensp; ユーザー削除
 
 ##### ビデオ
 
 - [x] /videos/watch &ensp;：&ensp; 動画視聴
-- [x] /videos/edit &ensp;：&ensp; 動画説明編集
+- [x] /videos/edit &ensp;：&ensp; 動画の説明編集
 - [x] /videos/delete &ensp;：&ensp; 動画削除
 - [x] /videos/comments &ensp;：&ensp; コメント登録
 - [x] /videos/comments/delete &ensp;：&ensp; コメント削除
