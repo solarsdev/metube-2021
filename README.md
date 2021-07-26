@@ -31,19 +31,19 @@
 ##### グローバル
 
 - [x] / &ensp;：&ensp; ホームページ
-- [ ] /join &ensp;：&ensp; 会員登録
-- [ ] /login &ensp;：&ensp; ログイン
-- [ ] /search &ensp;：&ensp; 検索
+- [x] /join &ensp;：&ensp; 会員登録
+- [x] /login &ensp;：&ensp; ログイン
+- [x] /search &ensp;：&ensp; 検索
 
 ##### ユーザー
 
 - [x] /users/edit &ensp;：&ensp; 検索
-- [ ] /users/delete &ensp;：&ensp; 検索
+- [x] /users/delete &ensp;：&ensp; 検索
 
 ##### ビデオ
 
 - [x] /videos/watch &ensp;：&ensp; 動画視聴
-- [ ] /videos/edit &ensp;：&ensp; 動画説明編集
-- [ ] /videos/delete &ensp;：&ensp; 動画削除
-- [ ] /videos/comments &ensp;：&ensp; コメント登録
-- [ ] /videos/comments/delete &ensp;：&ensp; コメント削除
+- [x] /videos/edit &ensp;：&ensp; 動画説明編集
+- [x] /videos/delete &ensp;：&ensp; 動画削除
+- [x] /videos/comments &ensp;：&ensp; コメント登録
+- [x] /videos/comments/delete &ensp;：&ensp; コメント削除

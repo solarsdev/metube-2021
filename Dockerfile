@@ -13,7 +13,7 @@ RUN npm ci --only=production
 # RUN npm install --only=production
 
 # アプリケーションのソースをバンドルする
-COPY lib .
+COPY dist dist
 
 EXPOSE 4000
-CMD [ "node", "server.js" ]
+CMD [ "node", "dist/server.js" ]
