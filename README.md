@@ -2,7 +2,7 @@
 
 ## ユーチューブをクローンしたウェブサイト（ver. 2021）
 
-このプロジェクトで利用した技術スタック
+##### このプロジェクトで利用した技術スタック
 
 - pug (html template engine for nodejs)
 - javascript
@@ -18,13 +18,13 @@
 
 ## Dockerfile
 
-#####ビルドコマンド
+##### ビルドコマンド
 
 ```bash
 $ docker image build . -t <accountName>/<imageName>
 ```
 
-#####起動コマンド
+##### 起動コマンド
 
 ```bash
 $ docker container run -p <hostPort>:4000 -d <accountName>/<imageName>
@@ -32,7 +32,7 @@ $ docker container run -p <hostPort>:4000 -d <accountName>/<imageName>
 
 ## Routers
 
-#####グローバル
+##### グローバル
 
 - [x] / &ensp;：&ensp; ホームページ
 - [x] /join &ensp;：&ensp; 会員登録
