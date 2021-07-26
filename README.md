@@ -14,7 +14,7 @@
 - AWS
   - CodePipeline
   - CodeBuild (using build docker)
-  - CodeDeploy (deploy to ECR)
+  - CodeDeploy (deploy to ECS)
 
 ## Dockerfile
 
@@ -30,24 +30,25 @@ $ docker image build . -t <accountName>/<imageName>
 $ docker container run -p <hostPort>:4000 -d <accountName>/<imageName>
 ```
 
-## Routers
+## ToDos
 
 ##### グローバル
 
-- [x] / &ensp;：&ensp; ホームページ
-- [x] /join &ensp;：&ensp; 会員登録
-- [x] /login &ensp;：&ensp; ログイン
-- [x] /search &ensp;：&ensp; 検索
+- [ ] / &ensp;：&ensp; ホームページ
+- [ ] /join &ensp;：&ensp; 会員登録
+- [ ] /login &ensp;：&ensp; ログイン
+- [ ] /search &ensp;：&ensp; 検索
 
 ##### ユーザー
 
-- [x] /users/edit &ensp;：&ensp; ユーザー編集
-- [x] /users/delete &ensp;：&ensp; ユーザー削除
+- [ ] /users/:id &ensp;：&ensp; ユーザーのプロフィール
+- [ ] /users/logout &ensp;：&ensp; ログアウト
+- [ ] /users/edit &ensp;：&ensp; 自分のアカウント情報を編集
+- [ ] /users/delete &ensp;：&ensp; 自分のアカウント削除
 
 ##### ビデオ
 
-- [x] /videos/watch &ensp;：&ensp; 動画視聴
-- [x] /videos/edit &ensp;：&ensp; 動画の説明編集
-- [x] /videos/delete &ensp;：&ensp; 動画削除
-- [x] /videos/comments &ensp;：&ensp; コメント登録
-- [x] /videos/comments/delete &ensp;：&ensp; コメント削除
+- [ ] /videos/:id &ensp;：&ensp; 動画視聴
+- [ ] /videos/:id/edit &ensp;：&ensp; 動画の説明編集
+- [ ] /videos/:id/delete &ensp;：&ensp; 動画削除
+- [ ] /videos/upload &ensp;：&ensp; 動画のアップロード
