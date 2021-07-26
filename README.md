@@ -2,7 +2,7 @@
 
 ### ユーチューブをクローンしたウェブサイト（ver. 2021）
 
-list what i use for this project
+このプロジェクトで利用した技術スタック
 
 - pug (html template engine for nodejs)
 - javascript
@@ -10,6 +10,21 @@ list what i use for this project
 - webpack
 - nodejs
 - mongodb
+- docker
+- AWS
+  - CodePipeline
+  - CodeBuild (using build docker)
+  - CodeDeploy (deploy to ECR)
+
+### Dockerfile
+
+##### ビルドコマンド
+
+- docker image build . -t (accountName)/(imageName)
+
+##### 起動コマンド
+
+- docker container run -p (hostPort):4000 -d (accountName)/(imageName)
 
 ### Routers ToDo
 
