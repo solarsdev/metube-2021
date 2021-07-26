@@ -10,6 +10,9 @@ const HOST = '0.0.0.0';
 
 const app = express();
 
+app.set('views', process.cwd() + '/src/views');
+app.set('view engine', 'pug');
+
 app.use(morgan('dev'));
 app.use('/', globalRouter);
 app.use('/users', userRouter);
