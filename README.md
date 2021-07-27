@@ -1,6 +1,12 @@
 # MeTube
 
-## ユーチューブをクローンしたウェブサイト（ver. 2021）
+- ユーチューブをクローンしたウェブサイト（ver. 2021）
+
+##### 既存バージョンとの違い
+
+- Dockerize
+- AWS CICD (using CodePipiline)
+- ECS でコンテナー化
 
 ##### このプロジェクトで利用した技術スタック
 
@@ -16,7 +22,36 @@
   - CodeBuild (using build docker)
   - CodeDeploy (deploy to ECS)
 
-## Dockerfile
+## Structure
+
+```bash
+.
+├── Dockerfile            # Dockerize Definition
+├── README.md
+├── babel.config.json     # ES6 Compiler Environment
+├── buildspec.yml         # AWS CodeBuild Spec
+├── package-lock.json
+├── package.json
+└── src                   # Source Code
+    ├── controllers
+    │   ├── userController.js
+    │   └── videoController.js
+    ├── routers
+    │   ├── globalRouter.js
+    │   ├── userRouter.js
+    │   └── videoRouter.js
+    ├── server.js
+    └── views
+        ├── base.pug      # Base Template Layout
+        ├── home.pug
+        └── partials
+            └── footer.pug
+```
+
+## Dockerize
+
+デモ環境は AWS CodeBuild を利用して自動的に ECR にビルドされ、ECS に配布します。
+個別テスト用に Docker Image を作成するには下記のコマンドで。
 
 ##### ビルドコマンド
 
