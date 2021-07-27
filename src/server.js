@@ -1,8 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
 
-const client 
-
 import globalRouter from './routers/globalRouter';
 import userRouter from './routers/userRouter';
 import videoRouter from './routers/videoRouter';
