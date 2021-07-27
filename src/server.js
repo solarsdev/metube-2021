@@ -14,6 +14,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
 app.use(morgan('dev'));
+app.use(express.urlencoded());
 app.use('/', globalRouter);
 app.use('/users', userRouter);
 app.use('/videos', videoRouter);
