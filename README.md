@@ -5,24 +5,25 @@
 ##### 既存バージョンとの違い
 
 - Dockerize
-- AWS CICD (using CodePipiline)
+- AWS managed CICD (using CodePipiline)
 - ECS でコンテナー化
 
 ##### このプロジェクトで利用した技術スタック
 
-- pug (html template engine for nodejs)
-- javascript
-- scss
+- Pug (html template engine for nodejs)
+- JavaScript
+- Scss
 - webpack
-- nodejs
-- mongodb
-- docker
+- Node.js
+- MongoDB `as AWS DocumentDB`
+- Docker
 - AWS
-  - CodePipeline
-  - CodeBuild (using build docker)
+  - CodePipeline (AWS managed CICD)
+  - CodeBuild (using build docker and push to ECR)
   - CodeDeploy (deploy to ECS)
+  - DocumentDB (alternative to MongoDB)
 
-## Structure
+## SourceCode Structure
 
 ```bash
 .
@@ -47,6 +48,10 @@
         └── partials
             └── footer.pug
 ```
+
+## インフラ構成図
+
+image here
 
 ## Dockerize
 
