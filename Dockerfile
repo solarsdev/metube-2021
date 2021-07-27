@@ -1,4 +1,4 @@
-FROM public.ecr.aws/bitnami/node:latest:14
+FROM public.ecr.aws/bitnami/node:14
 
 # アプリケーションディレクトリを作成する
 WORKDIR /usr/src/app
