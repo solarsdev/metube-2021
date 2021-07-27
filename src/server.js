@@ -1,6 +1,8 @@
 import express from 'express';
 import morgan from 'morgan';
 
+const client 
+
 import globalRouter from './routers/globalRouter';
 import userRouter from './routers/userRouter';
 import videoRouter from './routers/videoRouter';
@@ -21,4 +23,14 @@ app.use('/videos', videoRouter);
 
 const handleListening = () => console.log(`✅ Server listening on port http://${HOST}:${PORT} 🚀`);
 
-app.listen(PORT, HOST, handleListening);
+const server = app.listen(PORT, HOST, handleListening);
+
+process.on('SIGTERM', () => {
+  // SigTerm recieved (ECS specific)
+  // save if running job and using memory
+  // call aws sdk StopTask (gracefully shutdown)
+  // ToDo: save running jobs
+  server.close(() => {
+    debug('Nodejs backend closed');
+  });
+});
