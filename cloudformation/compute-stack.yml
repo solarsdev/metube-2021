@@ -1,0 +1,135 @@
+Parameters:
+  ParamClusterName:
+    Description: Enter your ECS cluster name as english (best practice a-z, hyphen, 0-9)
+    Type: String
+    Default: metube-2021
+  ParamContainerName:
+    Description: Enter your container name
+    Type: String
+    Default: metube-2021
+  ParamContainerImageName:
+    Description: Enter your docker image name (dockerhub or ECR)
+    Type: String
+    Default: solarsdev/metube-2021:latest
+  ParamContainerPort:
+    Description: Enter container port (default 4000)
+    Type: Number
+    Default: 4000
+  ParamServiceName:
+    Description: Enter your service name
+    Type: String
+    Default: metube-2021
+  ParamECSTaskExecutionRole:
+    Description: Enter your default ecsTaskExecutionRole ARN
+    Type: String
+    Default: arn:aws:iam::REPLACE-YOUR-ACCOUNT-ID-HERE:role/ecsTaskExecutionRole
+  ParamPublicSubnetsList:
+    Description: Enter your all public subnet Ids
+    Type: List<AWS::EC2::Subnet::Id>
+  ParamVPC:
+    Description: Enter your VPC id
+    Type: AWS::EC2::VPC::Id
+Resources:
+  MeTubeECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Ref ParamClusterName
+      CapacityProviders:
+        - FARGATE
+        - FARGATE_SPOT
+      DefaultCapacityProviderStrategy:
+        - CapacityProvider: FARGATE_SPOT
+          Weight: 1
+  MeTubeTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Ref ParamServiceName
+      ContainerDefinitions:
+        - Name: !Ref ParamContainerName
+          Image: !Ref ParamContainerImageName
+          MemoryReservation: 512
+          PortMappings:
+            - ContainerPort: !Ref ParamContainerPort
+              Protocol: tcp
+          Essential: true
+          StopTimeout: 120
+      ExecutionRoleArn: !Ref ParamECSTaskExecutionRole
+      Cpu: 256
+      Memory: 512
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+  MeTubeECSService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref MeTubeECSCluster
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DesiredCount: 1
+      EnableECSManagedTags: true
+      HealthCheckGracePeriodSeconds: 20
+      LaunchType: FARGATE
+      LoadBalancers:
+        - !Ref MeTubeALB
+      PlatformVersion: LATEST
+      SchedulingStrategy: REPLICA
+      ServiceName: !Ref ParamServiceName
+      ServiceRegistries: ServiceRegistries
+      TaskDefinition: !Ref MeTubeTaskDefinition
+  MeTubeALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      Name: !Join ['-', [!Ref ParamServiceName, service, elb]]
+      Scheme: internet-facing
+      SecurityGroups:
+        - !Ref MeTubeALBSecurityGroup
+      Subnets: !Ref ParamPublicSubnetsList
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['-', [!Ref ParamServiceName, service, elb]]
+      Type: application
+  MeTubeALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allows http/https server access from anywhere for ELB
+      GroupName: !Join ['.', [!Ref ParamServiceName, web-access, sg]]
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, web-access, sg]]
+      VpcId: !Ref ParamVPC
+  MeTubeALBListener80:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions: # Required
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: 443
+            Host: '#{host}'
+            Path: '/#{path}'
+            Query: '#{query}'
+            StatusCode: HTTP_301
+      LoadBalancerArn: !Ref MeTubeALB # Required
+      Port: 80
+      Protocol: HTTP
+Outputs:
+  MeTubeALBDNSName:
+    Description: DNS name of elastic load balancer
+    Value: !GetAtt MeTubeALB.DNSName
+    Export:
+      Name: !Sub ${AWS::StackName}-MeTubeALBDNSName

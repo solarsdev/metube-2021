@@ -2,7 +2,7 @@ Parameters:
   ParamServiceName:
     Description: Enter your service name as english (best practice a-z, hyphen, 0-9)
     Type: String
-    Default: my-service
+    Default: metube-2021
   ParamVPCCidr:
     Description: Enter your VPC default cidr range (leave as default if you dont know what this means)
     Type: String
@@ -199,3 +199,24 @@ Resources:
     Properties:
       SubnetId: !Ref PrivateSubnetC
       RouteTableId: !Ref PrivateRouteTable
+Outputs:
+  MeTubeVPC:
+    Description: vpc of stack
+    Value: !Ref MeTubeVPC
+    Export:
+      Name: !Sub ${AWS::StackName}-MeTubeVPC
+  PublicSubnetA:
+    Description: public subnet a of vpc stack
+    Value: !Ref PublicSubnetA
+    Export:
+      Name: !Sub ${AWS::StackName}-PublicSubnetA
+  PublicSubnetB:
+    Description: public subnet b of vpc stack
+    Value: !Ref PublicSubnetB
+    Export:
+      Name: !Sub ${AWS::StackName}-PublicSubnetB
+  PublicSubnetC:
+    Description: public subnet c of vpc stack
+    Value: !Ref PublicSubnetC
+    Export:
+      Name: !Sub ${AWS::StackName}-PublicSubnetC
