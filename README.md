@@ -18,10 +18,10 @@
 - MongoDB `as AWS DocumentDB`
 - Docker
 - AWS
+  - CloudFormation (Infrastructure as Code)
   - CodePipeline (AWS managed CICD)
   - CodeBuild (using build docker and push to ECR)
-  - CodeDeploy (deploy to ECS)
-  - DocumentDB (alternative to MongoDB)
+  - DocumentDB (AWS managed MongoDB)
 
 ## SourceCode Structure
 

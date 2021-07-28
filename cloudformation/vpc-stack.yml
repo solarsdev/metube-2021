@@ -1,0 +1,201 @@
+Parameters:
+  ParamServiceName:
+    Description: Enter your service name as english (best practice a-z, hyphen, 0-9)
+    Type: String
+    Default: my-service
+  ParamVPCCidr:
+    Description: Enter your VPC default cidr range (leave as default if you dont know what this means)
+    Type: String
+    Default: 10.1.0.0/16
+  ParamPublicSubnetACidr:
+    Description: Enter your Public Subnet A cidr range (leave as default if you dont know what this means)
+    Type: String
+    Default: 10.1.10.0/24
+  ParamPublicSubnetBCidr:
+    Description: Enter your Public Subnet B cidr range (leave as default if you dont know what this means)
+    Type: String
+    Default: 10.1.20.0/24
+  ParamPublicSubnetCCidr:
+    Description: Enter your Public Subnet C cidr range (leave as default if you dont know what this means)
+    Type: String
+    Default: 10.1.30.0/24
+  ParamPrivateSubnetACidr:
+    Description: Enter your Private Subnet A cidr range (leave as default if you dont know what this means)
+    Type: String
+    Default: 10.1.50.0/24
+  ParamPrivateSubnetBCidr:
+    Description: Enter your Private Subnet B cidr range (leave as default if you dont know what this means)
+    Type: String
+    Default: 10.1.60.0/24
+  ParamPrivateSubnetCCidr:
+    Description: Enter your Private Subnet C cidr range (leave as default if you dont know what this means)
+    Type: String
+    Default: 10.1.70.0/24
+Resources:
+  MeTubeVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref ParamVPCCidr
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, service, vpc]]
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    DependsOn: MeTubeVPC
+    Properties:
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, service, igw]]
+  AttachIGW:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MeTubeVPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      VpcId: !Ref MeTubeVPC
+      CidrBlock: !Ref ParamPublicSubnetACidr
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, public-a, subnet]]
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [1, !GetAZs '']
+      VpcId: !Ref MeTubeVPC
+      CidrBlock: !Ref ParamPublicSubnetBCidr
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, public-b, subnet]]
+  PublicSubnetC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [2, !GetAZs '']
+      VpcId: !Ref MeTubeVPC
+      CidrBlock: !Ref ParamPublicSubnetCCidr
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, public-c, subnet]]
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      VpcId: !Ref MeTubeVPC
+      CidrBlock: !Ref ParamPrivateSubnetACidr
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, private-a, subnet]]
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [1, !GetAZs '']
+      VpcId: !Ref MeTubeVPC
+      CidrBlock: !Ref ParamPrivateSubnetBCidr
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, private-b, subnet]]
+  PrivateSubnetC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [2, !GetAZs '']
+      VpcId: !Ref MeTubeVPC
+      CidrBlock: !Ref ParamPrivateSubnetCCidr
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, private-c, subnet]]
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MeTubeVPC
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, public-route, rt]]
+  PublicRoute1:
+    Type: AWS::EC2::Route
+    DependsOn: AttachIGW
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MeTubeVPC
+      Tags:
+        - Key: ServiceName
+          Value: !Ref ParamServiceName
+        - Key: Name
+          Value: !Join ['.', [!Ref ParamServiceName, private-route, rt]]
+  # NATゲートウェイは費用問題で 😂
+  #  PrivateRoute1:
+  #    Type: AWS::EC2::Route
+  #    Properties:
+  #      RouteTableId: !Ref PrivateRouteTable
+  #      DestinationCidrBlock: 0.0.0.0/0
+  #      NatGatewayId: !Ref NATGateway
+  #  NATGateway:
+  #    Type: AWS::EC2::NatGateway
+  #    Properties:
+  #      AllocationId: !GetAtt EIPforNAT.AllocationId
+  #      SubnetId: !Ref PublicSubnetA
+  #      Tags:
+  #        - Key: ServiceName
+  #          Value: !Ref ParamServiceName
+  #        - Key: Name
+  #          Value: !Join ['.', [!Ref ParamServiceName, service, nat]]
+  #  EIPforNAT:
+  #    Type: AWS::EC2::EIP
+  #    Properties:
+  #      Domain: MeTubeVPC
+  PublicSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetCRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetC
+      RouteTableId: !Ref PublicRouteTable
+  PrivateSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetCRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetC
+      RouteTableId: !Ref PrivateRouteTable
