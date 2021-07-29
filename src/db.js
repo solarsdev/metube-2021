@@ -15,14 +15,21 @@ if (env === 'dev') {
   )}@${process.env.MONGO_HOST_DEV}:${process.env.MONGO_PORT_DEV}/${process.env.MONGO_DBNAME_DEV}`;
 }
 
-const options = {
+let options = {
   useFindAndModify: false,
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  retryWrites: false,
   ssl: true,
   sslValidate: env === 'dev' ? false : true, // for dev purpose
   sslCA: fs.readFileSync(`${__dirname}/auth/rds-combined-ca-bundle.pem`),
 };
+
+// if prod env, cluster connect add replica options
+if (env !== 'dev') {
+  options.replicaSet = 'rs0';
+  options.readPreference = 'secondaryPreferred';
+}
 
 mongoose.connect(uri, options);
 

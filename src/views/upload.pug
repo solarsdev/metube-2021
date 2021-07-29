@@ -1,7 +1,11 @@
 extends base.pug
 
-block content 
+block content
+  if error
+    span=error.stack
   h3 Upload Video
-  form(method="post") 
-    input(type="text", name="title", placeholder="Video Title", required)
+  form(method="post")
+    input(type="text", name="title", placeholder="Enter video title", maxlength=80, required)
+    input(type="text", name="description", placeholder="Enter description", minlength=20, required)
+    input(type="text", name="hashtags", placeholder="Enter hashtags, seperated by comma", required)
     input(type="submit", value="Upload")
