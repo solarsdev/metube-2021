@@ -22,7 +22,7 @@ let options = {
   retryWrites: false,
   ssl: true,
   sslValidate: env === 'dev' ? false : true, // for dev purpose
-  sslCA: fs.readFileSync(`${__dirname}/auth/rds-combined-ca-bundle.pem`),
+  sslCA: [fs.readFileSync(`${__dirname}/auth/rds-combined-ca-bundle.pem`)],
 };
 
 // if prod env, cluster connect add replica options
