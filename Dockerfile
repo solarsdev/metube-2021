@@ -16,4 +16,4 @@ RUN npm ci --only=production
 COPY dist dist
 
 EXPOSE 4000
-CMD [ "node", "dist/server.js" ]
+CMD [ "node", "dist/init.js" ]
