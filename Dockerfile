@@ -7,6 +7,7 @@ WORKDIR /usr/src/app
 # ワイルドカードを使用して、package.json と package-lock.json の両方が確実にコピーされるようにします。
 # 可能であれば (npm@5+)
 COPY package*.json ./
+COPY .env ./
 
 RUN npm ci --only=production
 # 本番用にコードを作成している場合
