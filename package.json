@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec babel-node src/server.js dev",
-    "build": "babel src --out-dir dist --copy-files && cp -r src/views dist/views",
+    "prebuild": "rm -rf dist",
+    "build": "babel src --out-dir dist --copy-files",
     "start": "node lib/server.js"
   },
   "repository": {
