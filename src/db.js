@@ -3,15 +3,24 @@ import mongoose from 'mongoose';
 
 require('dotenv').config();
 
-const uri = `mongodb://${process.env.MONGO_USER}:${encodeURIComponent(
-  process.env.MONGO_PASSWORD,
-)}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/metube-2021`;
+const env = process.argv[2];
+
+let uri = `mongodb://${process.env.MONGO_USER_PROD}:${encodeURIComponent(
+  process.env.MONGO_PASSWORD_PROD,
+)}@${process.env.MONGO_HOST_PROD}:${process.env.MONGO_PORT_PROD}/${process.env.MONGO_DBNAME_PROD}`;
+
+if (env === 'dev') {
+  uri = `mongodb://${process.env.MONGO_USER_DEV}:${encodeURIComponent(
+    process.env.MONGO_PASSWORD_DEV,
+  )}@${process.env.MONGO_HOST_DEV}:${process.env.MONGO_PORT_DEV}/${process.env.MONGO_DBNAME_DEV}`;
+}
+
 const options = {
   useFindAndModify: false,
   useNewUrlParser: true,
   useUnifiedTopology: true,
   ssl: true,
-  sslValidate: false, // for dev purpose
+  sslValidate: env === 'dev' ? false : true, // for dev purpose
   sslCA: fs.readFileSync(`${__dirname}/auth/rds-combined-ca-bundle.pem`),
 };
 

@@ -4,7 +4,7 @@
   "description": "Cloning yutube ver 2021 using NodeJS, Express, Mongo and ES6 💖",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/server.js",
+    "dev": "nodemon --exec babel-node src/server.js dev",
     "build": "babel src --out-dir dist --copy-files && cp -r src/views dist/views",
     "start": "node lib/server.js"
   },
