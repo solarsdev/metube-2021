@@ -5,9 +5,6 @@ import app from './server';
 const PORT = 4000;
 const HOST = '0.0.0.0';
 
-console.log(process.env.MONGO_PASSWORD_PROD);
-console.log(process.env.MONGO_HOST_PROD);
-
 const handleListening = () => console.log(`✅ Server listening on port http://${HOST}:${PORT} 🚀`);
 
 const server = app.listen(PORT, HOST, handleListening);
