@@ -3,5 +3,7 @@ extends base.pug
 block content 
   h3 Edit Video
   form(method="post")
-    input(type="text", name="title" placeholder="Video Title", value=video.title, required)
+    input(type="text", name="title" placeholder="Enter video title", value=video.title, maxlength=80, required)
+    input(type="text", name="description" placeholder="Enter video description", value=video.description, minlength=20, required)
+    input(type="text", name="hashtags", placeholder="Enter hashtags, seperated with comma", value=`${video.hashtags.join()}`, required)
     input(type="submit", value="Submit")
