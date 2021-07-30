@@ -21,6 +21,7 @@
   "homepage": "https://github.com/solarsdev/metube-2021#readme",
   "dependencies": {
     "@babel/runtime": "^7.14.8",
+    "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongoose": "^5.13.4",

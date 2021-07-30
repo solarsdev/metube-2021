@@ -19,6 +19,7 @@ let options = {
   useFindAndModify: false,
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
   retryWrites: false,
   ssl: true,
   sslValidate: env === 'dev' ? false : true, // for dev purpose
