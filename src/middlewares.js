@@ -4,3 +4,9 @@ export const localMiddleware = (req, res, next) => {
   res.locals.siteName = 'MeTube';
   next();
 };
+
+export const sessionMiddleware = (req, res, next) => {
+  req.session._garbage = Date();
+  req.session.touch();
+  next();
+};

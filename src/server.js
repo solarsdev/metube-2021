@@ -2,7 +2,7 @@ import { getSessionStore } from './db';
 import express from 'express';
 import morgan from 'morgan';
 import session from 'express-session';
-import { localMiddleware } from './middlewares';
+import { localMiddleware, sessionMiddleware } from './middlewares';
 
 import rootRouter from './routers/rootRouter';
 import userRouter from './routers/userRouter';
@@ -18,6 +18,7 @@ app.use(express.urlencoded());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
+    cookie: { maxAge: 3600000 * 24 * 14 },
     resave: false,
     saveUninitialized: false,
     store: getSessionStore(),
