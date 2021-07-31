@@ -1,5 +1,7 @@
+import { MemoryStore } from 'express-session';
 import fs from 'fs';
 import mongoose from 'mongoose';
+import MongoStore from 'connect-mongo';
 
 require('dotenv').config();
 
@@ -40,4 +42,14 @@ const handleOpen = () => console.log('✅ Connected to DB');
 const handleError = (error) => console.log('❌ DB Error', error);
 
 db.once('open', handleOpen);
-db.on('error', (error) => console.log('DB Error', error));
+db.on('error', handleError);
+
+export const getSessionStore = () => {
+  const connection = mongoose.connection;
+  if (connection) {
+    return MongoStore.create({
+      client: connection.getClient(),
+    });
+  }
+  return new MemoryStore();
+};
