@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY .env ./
 
-RUN npm ci --only=production
+RUN npm ci --only=production --unsafe-perms
 # 本番用にコードを作成している場合
 # RUN npm install --only=production
 
