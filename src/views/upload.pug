@@ -5,6 +5,7 @@ block content
     span=error.stack
   h3 Upload Video
   form(method="post")
+    input(type="hidden", name="_csrf", value=csrfToken)
     input(type="text", name="title", placeholder="Enter video title", maxlength=80, required)
     input(type="text", name="description", placeholder="Enter description", minlength=20, required)
     input(type="text", name="hashtags", placeholder="Enter hashtags, seperated by comma", required)

@@ -21,13 +21,19 @@
   "homepage": "https://github.com/solarsdev/metube-2021#readme",
   "dependencies": {
     "@babel/runtime": "^7.14.8",
-    "amazon-cognito-identity-js": "^5.0.6",
+    "bcrypt": "^5.0.1",
     "connect-mongo": "^4.4.1",
+    "cookie-parser": "^1.4.5",
+    "csurf": "^1.11.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.4",
     "morgan": "^1.10.0",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
     "pug": "^3.0.2"
   },
   "devDependencies": {

@@ -33,7 +33,11 @@ export const getEdit = async (req, res) => {
   if (!video) {
     return res.status(404).render('404', { pageTitle: 'Page not found' });
   }
-  return res.render('editVideo', { pageTitle: `Editing ${video.title}`, video });
+  return res.render('editVideo', {
+    pageTitle: `Editing ${video.title}`,
+    video,
+    csrfToken: req.csrfToken(),
+  });
 };
 
 export const postEdit = async (req, res) => {
@@ -53,7 +57,8 @@ export const deleteVideo = async (req, res) => {
   return res.redirect('/');
 };
 
-export const getUpload = (req, res) => res.render('upload', { pageTitle: 'Upload Video' });
+export const getUpload = (req, res) =>
+  res.render('upload', { pageTitle: 'Upload Video', csrfToken: req.csrfToken() });
 
 export const postUpload = async (req, res) => {
   try {
