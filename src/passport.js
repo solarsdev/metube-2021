@@ -1,6 +1,6 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { Strategy as JWTStrategy } from 'passport-jwt';
+import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
 import bcrypt from 'bcrypt';
 import User from './models/User';
 
@@ -29,15 +29,8 @@ passport.use(
   }),
 );
 
-const cookieExtractor = (req) => {
-  if (req && req.signedCookies) {
-    return req.signedCookies.jwt;
-  }
-  return null;
-};
-
 const JWTConfig = {
-  jwtFromRequest: cookieExtractor,
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_SECRET,
 };
 

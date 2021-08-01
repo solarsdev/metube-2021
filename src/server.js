@@ -3,7 +3,7 @@ import express from 'express';
 import morgan from 'morgan';
 import passport from 'passport';
 import './passport';
-import { localMiddleware } from './middlewares';
+import { localMiddleware, setHeaderMiddleware } from './middlewares';
 
 import rootRouter from './routers/rootRouter';
 import userRouter from './routers/userRouter';
@@ -18,6 +18,7 @@ app.disable('etag');
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(setHeaderMiddleware);
 app.use(localMiddleware);
 app.use(passport.initialize());
 app.use('/', rootRouter);

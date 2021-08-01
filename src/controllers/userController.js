@@ -56,7 +56,12 @@ export const postLogin = (req, res) => {
         },
         process.env.JWT_SECRET,
       );
-      res.cookie('jwt', token, { signed: true });
+      res.cookie(process.env.COOKIE_EID, token, {
+        httpOnly: true,
+        maxAge: 1200000,
+        secure: true,
+        signed: true,
+      });
       return res.redirect('/');
     })(req, res);
   } catch (error) {
@@ -69,7 +74,7 @@ export const postLogin = (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  res.clearCookie('jwt');
+  res.clearCookie(process.env.COOKIE_EID);
   return res.redirect('/');
 };
 
