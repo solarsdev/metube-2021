@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { getUserFromToken } from '../middlewares';
@@ -116,5 +117,37 @@ export const postEdit = async (req, res) => {
 
   return res.redirect('/users/edit');
 };
+
+export const getChangePassword = (req, res) =>
+  res.render('users/change-password', { pageTitle: 'Change password', csrfToken: req.csrfToken() });
+
+export const postChangePassword = async (req, res) => {
+  const {
+    body: { oldPassword, newPassword, newPassword2 },
+  } = req;
+  const user = await getUserFromToken(req, res);
+  const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+
+  if (!isValidPassword) {
+    return res.status(400).render('users/change-password', {
+      pageTitle: 'Change password',
+      errorMessage: 'Current password is invalid',
+      csrfToken: req.csrfToken(),
+    });
+  }
+
+  if (newPassword !== newPassword2) {
+    return res.status(400).render('users/change-password', {
+      pageTitle: 'Change password',
+      errorMessage: 'New password confirmation does not match',
+      csrfToken: req.csrfToken(),
+    });
+  }
+
+  user.password = newPassword;
+  await user.save();
+  return res.redirect('/logout');
+};
+
 export const profile = (req, res) => res.send('profile');
 export const deleteUser = (req, res) => res.send('delete user');
