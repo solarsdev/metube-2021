@@ -85,7 +85,8 @@ export const logout = async (req, res) => {
 };
 
 export const getEdit = (req, res) =>
-  res.render('editProfile', { pageTitle: 'Edit profile', csrfToken: req.csrfToken() });
+  res.render('users/edit', { pageTitle: 'Edit profile', csrfToken: req.csrfToken() });
+
 export const postEdit = async (req, res) => {
   const {
     body: { email, name, location },
@@ -99,7 +100,7 @@ export const postEdit = async (req, res) => {
   if (email !== user.email) {
     const alreadyTaken = await User.exists({ email });
     if (alreadyTaken) {
-      return res.status(400).render('editProfile', {
+      return res.status(400).render('users/edit', {
         pageTitle: 'Edit profile',
         errorMessage: 'Email is already taken',
         csrfToken: req.csrfToken(),
