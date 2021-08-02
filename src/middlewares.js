@@ -1,6 +1,6 @@
 import passport from 'passport';
 
-const getUserFromToken = (req, res) => {
+export const getUserFromToken = (req, res) => {
   return new Promise((resolve, reject) => {
     passport.authenticate('jwt', { session: false }, (error, user, info) => {
       if (error || !user) {

@@ -1,0 +1,11 @@
+extends base.pug
+
+block content
+  if errorMessage
+    p=errorMessage
+  form(method="post")
+    input(type="hidden", name="_csrf", value=csrfToken)
+    input(type="email", name="email", placeholder="Email", value=user.email, required)
+    input(type="text", name="name", placeholder="Name", value=user.name, required)
+    input(type="text", name="location", placeholder="Location", value=user.location, required)
+    input(type="submit", value="Save")

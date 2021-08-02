@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import { getUserFromToken } from '../middlewares';
 import User from '../models/User';
 
 export const getJoin = (req, res) =>
@@ -11,6 +12,7 @@ export const postJoin = async (req, res) => {
     return res.status(400).render('join', {
       pageTitle: 'Join',
       errorMessage: 'Password confirmation does not match',
+      csrfToken: req.csrfToken(),
     });
   }
   try {
@@ -26,6 +28,7 @@ export const postJoin = async (req, res) => {
     return res.status(400).render('join', {
       pageTitle: 'Join',
       errorMessage: error._message,
+      csrfToken: req.csrfToken(),
     });
   }
 };
@@ -40,6 +43,7 @@ export const postLogin = (req, res) => {
         return res.status(401).render('login', {
           pageTitle: 'Login',
           errorMessage: error,
+          csrfToken: req.csrfToken(),
         });
       }
 
@@ -47,12 +51,13 @@ export const postLogin = (req, res) => {
         return res.status(401).render('login', {
           pageTitle: 'Login',
           errorMessage: info.message,
+          csrfToken: req.csrfToken(),
         });
       }
 
       const token = jwt.sign(
         {
-          email: user.email,
+          _id: user._id,
         },
         process.env.JWT_SECRET,
       );
@@ -69,6 +74,7 @@ export const postLogin = (req, res) => {
     return res.status(401).render('login', {
       pageTitle: 'Login',
       errorMessage: error.message,
+      csrfToken: req.csrfToken(),
     });
   }
 };
@@ -78,6 +84,36 @@ export const logout = async (req, res) => {
   return res.redirect('/');
 };
 
+export const getEdit = (req, res) =>
+  res.render('editProfile', { pageTitle: 'Edit profile', csrfToken: req.csrfToken() });
+export const postEdit = async (req, res) => {
+  const {
+    body: { email, name, location },
+  } = req;
+  const user = await getUserFromToken(req, res);
+
+  if (!user) {
+    return res.redirect('/');
+  }
+
+  if (email !== user.email) {
+    const alreadyTaken = await User.exists({ email });
+    if (alreadyTaken) {
+      return res.status(400).render('editProfile', {
+        pageTitle: 'Edit profile',
+        errorMessage: 'Email is already taken',
+        csrfToken: req.csrfToken(),
+      });
+    }
+  }
+
+  await User.findByIdAndUpdate(user._id, {
+    email,
+    name,
+    location,
+  });
+
+  return res.redirect('/users/edit');
+};
 export const profile = (req, res) => res.send('profile');
-export const edit = (req, res) => res.send('edit user');
 export const deleteUser = (req, res) => res.send('delete user');

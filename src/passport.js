@@ -38,7 +38,7 @@ passport.use(
   'jwt',
   new JWTStrategy(JWTConfig, async (jwtPayload, done) => {
     try {
-      const user = await User.findOne({ email: jwtPayload.email });
+      const user = await User.findById(jwtPayload._id);
       if (!user) {
         return done(null, false, { message: 'invalid authorization request' });
       }
