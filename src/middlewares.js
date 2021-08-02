@@ -12,6 +12,15 @@ const getUserFromToken = (req, res) => {
   });
 };
 
+export const csrfMiddleware = (err, req, res, next) => {
+  if (err.code !== 'EBADCSRFTOKEN') {
+    return next(err);
+  }
+
+  res.status(403);
+  res.send('Not Authorized. csrf error.');
+};
+
 export const localMiddleware = async (req, res, next) => {
   res.locals.siteName = 'MeTube';
   const user = await getUserFromToken(req, res);
