@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import { deleteStorageFile } from '../middlewares';
 import User from '../models/User';
 
 export const getJoin = (req, res) =>
@@ -94,9 +95,16 @@ export const getEdit = (req, res) =>
 export const postEdit = async (req, res) => {
   const {
     body: { email, name, location },
-    file: { location: avatarUrl },
+    file,
   } = req;
   const user = res.locals.user;
+  const avatar =
+    file && 'key' in file
+      ? {
+          avatarKey: file.key,
+          avatarUrl: `${process.env.STORAGE_URL}/${file.key}`,
+        }
+      : user.avatar;
 
   if (!user) {
     return res.redirect('/');
@@ -117,7 +125,7 @@ export const postEdit = async (req, res) => {
     email,
     name,
     location,
-    avatarUrl,
+    avatar,
   });
 
   return res.redirect('/users/edit');
@@ -152,6 +160,19 @@ export const postChangePassword = async (req, res) => {
   user.password = newPassword;
   await user.save();
   return res.redirect('/logout');
+};
+
+export const deleteAvatar = async (req, res) => {
+  const user = res.locals.user;
+  try {
+    await deleteStorageFile(user.avatar.avatarKey);
+    await User.findByIdAndUpdate(user._id, {
+      $unset: { avatar: true },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  return res.redirect('/users/edit');
 };
 
 export const profile = (req, res) => res.send('profile');

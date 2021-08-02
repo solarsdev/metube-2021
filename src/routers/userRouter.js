@@ -7,6 +7,7 @@ import {
   deleteUser,
   getChangePassword,
   postChangePassword,
+  deleteAvatar,
 } from '../controllers/userController';
 import { authOnly, avatarUploader } from '../middlewares';
 
@@ -23,6 +24,7 @@ userRouter
   .all(authOnly, csrf)
   .get(getChangePassword)
   .post(postChangePassword);
+userRouter.get('/avatar/delete', authOnly, deleteAvatar);
 userRouter.get('/delete', deleteUser);
 userRouter.get('/:id(\\d+)', profile);
 
