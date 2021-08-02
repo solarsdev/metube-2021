@@ -1,14 +1,39 @@
 import passport from 'passport';
 
-export const localMiddleware = (req, res, next) => {
+const getUserFromToken = (req, res) => {
+  return new Promise((resolve, reject) => {
+    passport.authenticate('jwt', { session: false }, (error, user, info) => {
+      if (error || !user) {
+        return resolve(null);
+      }
+
+      return resolve(user);
+    })(req, res);
+  });
+};
+
+export const localMiddleware = async (req, res, next) => {
   res.locals.siteName = 'MeTube';
-  passport.authenticate('jwt', { session: false }, (error, user, info) => {
-    if (user) {
-      res.locals.loggedIn = true;
-      res.locals.user = user;
-    }
+  const user = await getUserFromToken(req, res);
+  res.locals.loggedIn = Boolean(user);
+  res.locals.user = user || {};
+  return next();
+};
+
+export const authOnly = async (req, res, next) => {
+  const user = await getUserFromToken(req, res);
+  if (user) {
     return next();
-  })(req, res);
+  }
+  return res.redirect('/login');
+};
+
+export const publicOnly = async (req, res, next) => {
+  const user = await getUserFromToken(req, res);
+  if (!user) {
+    return next();
+  }
+  return res.redirect('/');
 };
 
 export const setHeaderMiddleware = (req, res, next) => {
