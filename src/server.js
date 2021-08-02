@@ -10,8 +10,8 @@ import rootRouter from './routers/rootRouter';
 import userRouter from './routers/userRouter';
 import videoRouter from './routers/videoRouter';
 
-const csrf = csurf({ cookie: true });
 const app = express();
+const csrf = csurf({ cookie: true });
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');

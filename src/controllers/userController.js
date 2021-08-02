@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import { getUserFromToken } from '../middlewares';
 import User from '../models/User';
 
 export const getJoin = (req, res) =>
@@ -61,10 +60,14 @@ export const postLogin = (req, res) => {
           _id: user._id,
         },
         process.env.JWT_SECRET,
+        {
+          expiresIn: '14d',
+          issuer: process.env.JWT_ISSUER,
+        },
       );
       res.cookie(process.env.COOKIE_EID, token, {
         httpOnly: true,
-        maxAge: 1200000,
+        maxAge: 3600000 * 24 * 14,
         secure: true,
         signed: true,
       });
@@ -80,7 +83,7 @@ export const postLogin = (req, res) => {
   }
 };
 
-export const logout = async (req, res) => {
+export const logout = (req, res) => {
   res.clearCookie(process.env.COOKIE_EID);
   return res.redirect('/');
 };
@@ -91,8 +94,9 @@ export const getEdit = (req, res) =>
 export const postEdit = async (req, res) => {
   const {
     body: { email, name, location },
+    file: { location: avatarUrl },
   } = req;
-  const user = await getUserFromToken(req, res);
+  const user = res.locals.user;
 
   if (!user) {
     return res.redirect('/');
@@ -113,6 +117,7 @@ export const postEdit = async (req, res) => {
     email,
     name,
     location,
+    avatarUrl,
   });
 
   return res.redirect('/users/edit');
@@ -125,7 +130,7 @@ export const postChangePassword = async (req, res) => {
   const {
     body: { oldPassword, newPassword, newPassword2 },
   } = req;
-  const user = await getUserFromToken(req, res);
+  const user = res.locals.user;
   const isValidPassword = await bcrypt.compare(oldPassword, user.password);
 
   if (!isValidPassword) {

@@ -8,12 +8,16 @@ import {
   getChangePassword,
   postChangePassword,
 } from '../controllers/userController';
-import { authOnly } from '../middlewares';
+import { authOnly, avatarUploader } from '../middlewares';
 
 const csrf = csurf({ cookie: true });
 const userRouter = express.Router();
 
-userRouter.route('/edit').all(authOnly, csrf).get(getEdit).post(postEdit);
+userRouter
+  .route('/edit')
+  .all(authOnly, csrf)
+  .get(getEdit)
+  .post(avatarUploader.single('avatar'), postEdit);
 userRouter
   .route('/change-password')
   .all(authOnly, csrf)

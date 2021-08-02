@@ -3,8 +3,11 @@ extends ../base.pug
 block content
   if errorMessage
     p=errorMessage
-  form(method="post")
-    input(type="hidden", name="_csrf", value=csrfToken)
+  if user.avatarUrl
+    img(src=user.avatarUrl, alt="avatar", width="100", height="100")
+  form(action=`?_csrf=${csrfToken}` method="post", enctype="multipart/form-data")
+    label(for="avatar") Avatar
+    input(type="file", name="avatar", id="avatar", accept="image/*") 
     input(type="email", name="email", placeholder="Email", value=user.email, required)
     input(type="text", name="name", placeholder="Name", value=user.name, required)
     input(type="text", name="location", placeholder="Location", value=user.location, required)

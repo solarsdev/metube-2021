@@ -1,15 +1,13 @@
 import fs from 'fs';
 import mongoose from 'mongoose';
 
-require('dotenv').config();
-
-const env = process.argv[2];
+const isProductionEnv = process.env.NODE_ENV === 'production';
 
 let uri = `mongodb://${process.env.MONGO_USER_PROD}:${encodeURIComponent(
   process.env.MONGO_PASSWORD_PROD,
 )}@${process.env.MONGO_HOST_PROD}:${process.env.MONGO_PORT_PROD}/${process.env.MONGO_DBNAME_PROD}`;
 
-if (env === 'dev') {
+if (!isProductionEnv) {
   uri = `mongodb://${process.env.MONGO_USER_DEV}:${encodeURIComponent(
     process.env.MONGO_PASSWORD_DEV,
   )}@${process.env.MONGO_HOST_DEV}:${process.env.MONGO_PORT_DEV}/${process.env.MONGO_DBNAME_DEV}`;
@@ -22,12 +20,12 @@ let options = {
   useCreateIndex: true,
   retryWrites: false,
   ssl: true,
-  sslValidate: env === 'dev' ? false : true, // for dev purpose
+  sslValidate: !isProductionEnv ? false : true, // for dev purpose
   sslCA: [fs.readFileSync(`${__dirname}/auth/rds-combined-ca-bundle.pem`)],
 };
 
 // if prod env, cluster connect add replica options
-if (env !== 'dev') {
+if (isProductionEnv) {
   options.replicaSet = 'rs0';
   options.readPreference = 'secondaryPreferred';
 }
