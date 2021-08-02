@@ -17,7 +17,6 @@ const storage = (folderName) => {
   return multerS3({
     s3: s3,
     bucket: 'metube-2021.service.s3',
-    acl: 'public-read',
     key: (req, file, cb) => {
       cb(null, `${folderName}/${crypto.randomBytes(16).toString('hex')}`);
     },
@@ -46,6 +45,7 @@ export const csrfMiddleware = (err, req, res, next) => {
 
 export const localMiddleware = async (req, res, next) => {
   res.locals.siteName = 'MeTube';
+  res.locals.storageUrl = process.env.STORAGE_URL;
   const user = await getUserFromToken(req, res);
   res.locals.loggedIn = Boolean(user);
   res.locals.user = user || {};

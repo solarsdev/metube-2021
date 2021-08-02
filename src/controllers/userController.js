@@ -98,13 +98,7 @@ export const postEdit = async (req, res) => {
     file,
   } = req;
   const user = res.locals.user;
-  const avatar =
-    file && 'key' in file
-      ? {
-          avatarKey: file.key,
-          avatarUrl: `${process.env.STORAGE_URL}/${file.key}`,
-        }
-      : user.avatar;
+  const avatarPath = file && 'key' in file ? file.key : user.avatarPath;
 
   if (!user) {
     return res.redirect('/');
@@ -125,7 +119,7 @@ export const postEdit = async (req, res) => {
     email,
     name,
     location,
-    avatar,
+    avatarPath,
   });
 
   return res.redirect('/users/edit');
@@ -165,9 +159,9 @@ export const postChangePassword = async (req, res) => {
 export const deleteAvatar = async (req, res) => {
   const user = res.locals.user;
   try {
-    await deleteStorageFile(user.avatar.avatarKey);
+    await deleteStorageFile(user.avatarPath);
     await User.findByIdAndUpdate(user._id, {
-      $unset: { avatar: true },
+      $unset: { avatarPath: true },
     });
   } catch (error) {
     console.log(error);

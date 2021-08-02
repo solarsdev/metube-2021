@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   name: { type: String, required: true },
   location: { type: String, required: true },
-  avatar: { avatarKey: String, avatarUrl: String },
+  avatarPath: String,
 });
 
 userSchema.pre('save', async function () {
