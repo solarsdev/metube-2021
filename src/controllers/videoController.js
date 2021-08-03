@@ -1,3 +1,4 @@
+import User from '../models/User';
 import Video from '../models/Video';
 
 export const home = async (req, res) => {
@@ -62,17 +63,38 @@ export const getUpload = (req, res) =>
 
 export const postUpload = async (req, res) => {
   try {
-    const { title, description, hashtags } = req.body;
-    await Video.create({
+    const {
+      body: { title, description, hashtags },
+      file,
+    } = req;
+
+    const videoPath = file && 'key' in file ? file.key : null;
+
+    if (!videoPath) {
+      return res.render('videos/upload', {
+        pageTitle: 'Upload Video',
+        errorMessage: 'Missing video',
+        csrfToken: req.csrfToken(),
+      });
+    }
+
+    const video = await Video.create({
       title,
       description,
       hashtags: Video.transformHashtags(hashtags),
+      videoPath,
+      owner: res.locals.user._id,
     });
-    return res.redirect('/');
+
+    const user = await User.findById(res.locals.user._id);
+    user.videos.push(video._id);
+    await user.save();
+
+    return res.redirect(`/videos/${video._id}`);
   } catch (error) {
     return res.render('videos/upload', {
       pageTitle: 'Upload Video',
-      error,
+      errorMessage: error.stack,
       csrfToken: req.csrfToken(),
     });
   }

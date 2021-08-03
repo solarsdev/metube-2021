@@ -1,6 +1,7 @@
 extends ../base.pug
 
 block content
+  video(src=`${storageUrl}/${video.videoPath}`, controls="true", width="780") 
   h3=video.title
   p=video.description
   small=video.createAt

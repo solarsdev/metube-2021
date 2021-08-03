@@ -6,8 +6,9 @@ import passport from 'passport';
 
 const isProductionEnv = process.env.NODE_ENV === 'production';
 const s3 = isProductionEnv
-  ? new aws.S3()
+  ? new aws.S3() // for production
   : new aws.S3({
+      // for dev
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -17,6 +18,7 @@ const storage = (folderName) => {
   return multerS3({
     s3: s3,
     bucket: 'metube-2021.service.s3',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
     key: (req, file, cb) => {
       cb(null, `${folderName}/${crypto.randomBytes(16).toString('hex')}`);
     },
@@ -88,7 +90,7 @@ export const avatarUploader = multer({
 export const videoUploader = multer({
   storage: storage('videos'),
   limits: {
-    fileSize: 1 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024,
   },
 });
 

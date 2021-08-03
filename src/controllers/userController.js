@@ -122,6 +122,10 @@ export const postEdit = async (req, res) => {
     avatarPath,
   });
 
+  if (avatarPath !== user.avatarPath) {
+    await deleteStorageFile(user.avatarPath);
+  }
+
   return res.redirect('/users/edit');
 };
 
