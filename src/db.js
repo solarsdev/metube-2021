@@ -3,15 +3,9 @@ import mongoose from 'mongoose';
 
 const isProductionEnv = process.env.NODE_ENV === 'production';
 
-let uri = `mongodb://${process.env.MONGO_USER_PROD}:${encodeURIComponent(
-  process.env.MONGO_PASSWORD_PROD,
-)}@${process.env.MONGO_HOST_PROD}:${process.env.MONGO_PORT_PROD}/${process.env.MONGO_DBNAME_PROD}`;
-
-if (!isProductionEnv) {
-  uri = `mongodb://${process.env.MONGO_USER_DEV}:${encodeURIComponent(
-    process.env.MONGO_PASSWORD_DEV,
-  )}@${process.env.MONGO_HOST_DEV}:${process.env.MONGO_PORT_DEV}/${process.env.MONGO_DBNAME_DEV}`;
-}
+const uri = `mongodb://${process.env.MONGO_USER}:${encodeURIComponent(
+  process.env.MONGO_PASSWORD,
+)}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DBNAME}`;
 
 let options = {
   useFindAndModify: false,
@@ -24,7 +18,7 @@ let options = {
   sslCA: [fs.readFileSync(`${__dirname}/auth/rds-combined-ca-bundle.pem`)],
 };
 
-// if prod env, cluster connect add replica options
+// if prod env, cluster connect with replica options
 if (isProductionEnv) {
   options.replicaSet = 'rs0';
   options.readPreference = 'secondaryPreferred';

@@ -55,7 +55,7 @@ export const localMiddleware = async (req, res, next) => {
 };
 
 export const authOnly = async (req, res, next) => {
-  if (res.locals.loggedIn) {
+  if (res.locals.loggedIn && res.locals.user) {
     return next();
   }
   return res.redirect('/login');
