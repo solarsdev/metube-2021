@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon --exec babel-node src/init.js dev",
     "prebuild": "rm -rf dist",
-    "build": "babel src --out-dir dist --copy-files",
+    "build": "./node_modules/.bin/babel src --out-dir dist --copy-files",
     "start": "node dist/init.js",
     "babel-version": "babel --version"
   },
