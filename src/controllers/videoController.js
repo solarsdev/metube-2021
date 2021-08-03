@@ -1,3 +1,4 @@
+import { deleteStorageFile } from '../middlewares';
 import User from '../models/User';
 import Video from '../models/Video';
 
@@ -53,8 +54,36 @@ export const postEdit = async (req, res) => {
 };
 
 export const deleteVideo = async (req, res) => {
-  const { id } = req.params;
-  await Video.findByIdAndDelete(id);
+  try {
+    const { id } = req.params;
+    const video = await Video.findById(id).select({ _id: true, owner: true, videoPath: true });
+    const user = res.locals.user;
+
+    if (!video) {
+      return res.redirect('/');
+    }
+
+    if (!user) {
+      return res.redirect(`/videos/${id}`);
+    }
+
+    if (String(video.owner) !== String(user._id)) {
+      console.log(typeof video.owner, typeof user._id);
+      console.log(video.owner, user._id);
+      return res.redirect(`/videos/${id}`);
+    }
+
+    await Promise.all([
+      Video.findByIdAndDelete(id),
+      User.findByIdAndUpdate(res.locals.user._id, {
+        $pull: { videos: id },
+      }),
+      deleteStorageFile(video.videoPath),
+    ]);
+    return res.redirect('/');
+  } catch (error) {
+    console.log(error);
+  }
   return res.redirect('/');
 };
 

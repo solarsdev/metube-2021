@@ -16,14 +16,34 @@ export const postJoin = async (req, res) => {
       csrfToken: req.csrfToken(),
     });
   }
+
   try {
-    await User.create({
+    const user = await User.create({
       email,
       password,
       name,
       location,
     });
-    return res.redirect('/login');
+
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '14d',
+        issuer: process.env.JWT_ISSUER,
+      },
+    );
+
+    res.cookie(process.env.COOKIE_EID, token, {
+      httpOnly: true,
+      maxAge: 3600000 * 24 * 14,
+      secure: true,
+      signed: true,
+    });
+
+    return res.redirect('/');
   } catch (error) {
     console.log(error);
     return res.status(400).render('join', {
@@ -163,15 +183,24 @@ export const postChangePassword = async (req, res) => {
 export const deleteAvatar = async (req, res) => {
   const user = res.locals.user;
   try {
-    await deleteStorageFile(user.avatarPath);
-    await User.findByIdAndUpdate(user._id, {
-      $unset: { avatarPath: true },
-    });
+    await Promise.all([
+      User.findByIdAndUpdate(user._id, {
+        $unset: { avatarPath: true },
+      }),
+      deleteStorageFile(user.avatarPath),
+    ]);
   } catch (error) {
     console.log(error);
   }
   return res.redirect('/users/edit');
 };
 
-export const profile = (req, res) => res.send('profile');
+export const profile = async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id).populate('videos');
+  if (!user) {
+    return res.render('404', { pageTitle: '404' });
+  }
+  return res.render('users/profile', { pageTitle: user.name, user });
+};
 export const deleteUser = (req, res) => res.send('delete user');

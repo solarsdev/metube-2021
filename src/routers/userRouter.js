@@ -25,7 +25,7 @@ userRouter
   .get(getChangePassword)
   .post(postChangePassword);
 userRouter.get('/avatar/delete', authOnly, deleteAvatar);
+userRouter.get('/:id([a-z0-9]{24})', profile);
 userRouter.get('/delete', deleteUser);
-userRouter.get('/:id(\\d+)', profile);
 
 export default userRouter;
