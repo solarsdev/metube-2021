@@ -139,7 +139,7 @@ export const postEdit = async (req, res) => {
       avatarPath,
     });
 
-    if (avatarPath !== user.avatarPath) {
+    if (avatarPath !== user.avatarPath && user.avatarPath) {
       await deleteStorageFile(user.avatarPath);
     }
 
