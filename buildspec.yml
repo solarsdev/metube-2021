@@ -6,7 +6,7 @@ phases:
       nodejs: 14
     commands:
       - npm install -g npm@latest
-      - npm ci --unsafe-perm=true
+      - npm install --unsafe-perm=true
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
