@@ -1,0 +1,25 @@
+$black: #282828;
+$blue: #0275d8;
+$grey: #f9f9f9;
+
+@keyframes scale-down-ver-top {
+  0% {
+    transform: scaleY(1);
+    transform-origin: 100% 0%;
+  }
+  100% {
+    transform: scaleY(0.3);
+    transform-origin: 100% 0%;
+  }
+}
+
+@keyframes scale-down-ver-down {
+  0% {
+    transform: scaleY(0.3);
+    transform-origin: 100% 0%;
+  }
+  100% {
+    transform: scaleY(1);
+    transform-origin: 100% 0%;
+  }
+}

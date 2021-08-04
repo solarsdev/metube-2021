@@ -1,8 +1,14 @@
 extends base.pug
-include mixins/video.pug
+include mixins/videoBlock.pug
 
 block content
   each video in videos
-    +video(video)
+    +videoBlock(video)
+    +videoBlock(video)
+    +videoBlock(video)
+    +videoBlock(video)
+    +videoBlock(video)
+    +videoBlock(video)
+    +videoBlock(video)
   else
     li nothing found.

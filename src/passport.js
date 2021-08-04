@@ -1,7 +1,11 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as LineStrategy } from 'passport-line-auth';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
 import User from './models/User';
 
 const passportConfig = {
@@ -47,4 +51,46 @@ passport.use(
       return done(error);
     }
   }),
+);
+
+passport.use(
+  'google',
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: 'http://localhost:4000/auth/google/callback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = await User.findOne({ email: profile._json.email });
+        return done(null, user, profile._json);
+      } catch (error) {
+        return done(error);
+      }
+    },
+  ),
+);
+
+passport.use(
+  'line',
+  new LineStrategy(
+    {
+      channelID: process.env.LINE_CHANNEL_ID,
+      channelSecret: process.env.LINE_CHANNEL_SECRET,
+      callbackURL: 'http://localhost:4000/auth/line/callback',
+      scope: ['profile', 'openid', 'email'],
+      botPrompt: 'normal',
+      uiLocales: 'ja-JP',
+    },
+    async (accessToken, refreshToken, params, _, done) => {
+      try {
+        const profile = jwt.decode(params.id_token);
+        const user = await User.findOne({ email: 'nothing' });
+        return done(null, user, profile);
+      } catch (error) {
+        return done(error);
+      }
+    },
+  ),
 );

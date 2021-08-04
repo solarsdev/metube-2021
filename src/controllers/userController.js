@@ -104,6 +104,41 @@ export const postLogin = (req, res) => {
   }
 };
 
+export const getGoogleLogin = passport.authenticate('google', { scope: ['email', 'profile'] });
+
+export const getGoogleLoginCallback = (req, res) => {
+  passport.authenticate('google', (error, user, profile) => {
+    if (error) {
+      return res.status(401).render('login', {
+        pageTitle: 'Login',
+        errorMessage: error,
+      });
+    }
+
+    console.log(profile);
+    res.end();
+  })(req, res);
+};
+
+export const getLineLogin = passport.authenticate('line', {
+  scope: ['profile', 'openid', 'email'],
+});
+
+export const getLineLoginCallback = (req, res) => {
+  passport.authenticate('line', (error, user, profile) => {
+    // line needs to be check profile.email (if user dont permit to send, maybe null)
+    if (error) {
+      return res.status(401).render('login', {
+        pageTitle: 'Login',
+        errorMessage: error,
+      });
+    }
+
+    console.log(profile);
+    res.end();
+  })(req, res);
+};
+
 export const logout = (req, res) => {
   res.clearCookie(process.env.COOKIE_EID);
   return res.redirect('/');

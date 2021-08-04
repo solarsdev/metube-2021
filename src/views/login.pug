@@ -3,8 +3,41 @@ extends base.pug
 block content
   if errorMessage
     span=errorMessage
-  form(method="post")
-    input(type="hidden", name="_csrf", value=csrfToken)
-    input(type="email", name="email", placeholder="Email", required)
-    input(type="password", name="password", placeholder="Password", required)
-    input(type="submit", value="Login")
+  .login
+    .login__header
+      h1
+        i.fas.fa-sign-in-alt.login__header-icon
+        span.login__header-text ログイン
+    .login__main 
+      .login__social.social-login
+        .social-login__header 
+          span 外部サービスでログイン
+        .social-login__btn.social-login__btn--facebook
+          i.fab.fa-facebook.social-login__btn-icon
+          span.social-login__desc.social-login__desc--facebook Facebookでログイン
+        a.social-login__btn.social-login__btn--line(href="/auth/line")
+          i.fab.fa-line.social-login__btn-icon
+          span.social-login__desc.social-login__desc--line Lineでログイン
+        a.social-login__btn.social-login__btn--google(href="/auth/google")
+          img.social-login__btn-icon(src="/static/images/logo-icon-google.svg")
+          span.social-login__desc.social-login__desc--google Googleでログイン
+        .social-login__footer 
+          span 取得した情報はログイン以外の目的に使われることはありません。
+          span ソーシャルログインの利用はメールアドレスが取得され、会員識別で利用します。同意する場合のみご利用ください。
+      .login__email.email-login
+        .email-login__header
+          span メールアドレスでログイン
+        form.email-login__form(method="post")
+          input(type="hidden", name="_csrf", value=csrfToken)
+          input.email-login__input.email-login__email(type="email", name="email", placeholder="メールアドレス", required=true)
+          input.email-login__input.email-login__password(type="password", name="password", placeholder="パスワード", required=true)
+          .email-login__logged-on
+            input.email-login__logged-on-checkbox#email-login__logged-on-checkbox(type="checkbox", name="loggedOn")
+            label.email-login__logged-on-text(for="email-login__logged-on-checkbox") ログインしたままにする
+          button.email-login__submit(type="submit") ログイン
+        a.email-login__forgot(href="asd")
+          span パスワードを忘れた方はこちら
+    a.login__footer(href="/join")
+      span まだアカウントをお持ちではない方は
+      span.login__footer-link こちら
+      i.fas.fa-chevron-right.login__footer-icon

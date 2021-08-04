@@ -1,18 +1,30 @@
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
 module.exports = {
-  entry: './src/client/js/main.js',
+  entry: {
+    index: './src/client/js/index.js',
+    videoPlayer: './src/client/js/videoPlayer.js',
+  },
   mode: 'development',
   watch: true,
   plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'src/client/images',
+          to: 'images',
+        },
+      ],
+    }),
     new MiniCssExtractPlugin({
       filename: 'css/styles.css',
     }),
   ],
   output: {
-    path: path.resolve(__dirname, 'src', 'assets'),
-    filename: 'js/main.js',
+    filename: 'js/[name].js',
+    path: path.resolve(__dirname, 'dist', 'assets'),
     clean: true,
   },
   module: {

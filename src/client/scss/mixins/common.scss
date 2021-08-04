@@ -1,0 +1,31 @@
+@mixin btnEffect($colorMain, $colorEffect) {
+  background-position: center;
+  transition: background 0.3s;
+
+  &:hover {
+    background: $colorMain radial-gradient(circle, transparent 1%, $colorMain 1%) center/15000%;
+  }
+
+  &:active {
+    background-color: $colorEffect;
+    background-size: 100%;
+    transition: background 0s;
+  }
+}
+
+@mixin headerLinks {
+  text-decoration: none;
+  margin: 0px 10px;
+  color: #6e6e6e;
+  transition: color 0.25s ease-in-out;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    color: $black;
+  }
+
+  &-icon {
+    margin-right: 5px;
+  }
+}

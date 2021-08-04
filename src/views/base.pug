@@ -4,47 +4,13 @@ html(lang="ko")
     meta(charset="UTF-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+    link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.15.2/css/all.css", integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu", crossorigin="anonymous")
     link(rel="stylesheet", href="/static/css/styles.css")
     title #{pageTitle} | #{siteName}
   body
-    header
-      h1=pageTitle
-      nav
-        ul
-          li 
-            a(href="/") Home
-          li
-            ||
-          li 
-            a(href="/search") Search
-          if loggedIn
-            li
-              ||
-            li 
-              a(href="/videos/upload") Upload Video
-            li
-              ||
-            li 
-              a(href=`/users/${user._id}`) My profile
-            li
-              ||
-            li 
-              a(href="/users/edit") Edit Profile
-            li
-              ||
-            li 
-              a(href="/logout") Logout
-          else
-            li
-              ||
-            li 
-              a(href="/join") Join
-            li
-              ||
-            li 
-              a(href="/login") Login
-    main
+    include partials/header
+    main.main
       block content
   include partials/footer.pug
-  script(src="/static/js/main.js")
+  script(src="/static/js/index.js")
+  block scripts

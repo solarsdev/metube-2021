@@ -1,0 +1,44 @@
+header.header
+  .menu
+    i.fas.fa-bars
+  .logo
+    a.logo__link(href="/") 
+      i.fab.fa-youtube.logo__icon
+      span.logo__text MeTube
+      span.logo__country-code JP
+  .search
+    form.search__form(action="/search", method="get") 
+      input.search__input(type="text", name="search_query", placeholder="検索")
+      button.search__submit(type="submit")
+        i.fas.fa-search
+  .header__column.header__column-login
+    if !loggedIn
+      a.header__login(href="/login")
+        i.fas.fa-sign-in-alt.header__login-icon
+        span.header__login-text ログイン
+      a.header__join(href="/join")
+        i.fas.fa-user-plus.header__join-icon
+        span.header__join-text 新規登録
+    else
+      li 
+        a(href="/videos/upload") Upload
+      li 
+        a(href=`/users/${user._id}`) Profile
+      img.header__avatar(src=`${storageUrl}/${user.avatarPath}`)
+      .user-menu.user-menu--hide
+        .user-menu__profile
+          img.user-menu__avatar(src=`${storageUrl}/${user.avatarPath}`)
+          .user-menu__names
+            span.user-menu__name=`${user.lastName ? user.lastName : ''} ${user.firstName ? user.firstName : ''}`
+            span.user-menu__email=user.email
+        .user-menu__controls
+          .user-menu__item
+            img.user-menu__icon--image(src="/static/images/beginner.svg")
+            span.user-menu__text 初めての方へ
+          .user-menu__item
+            i.fas.fa-cog.user-menu__icon
+            span.user-menu__text 設定
+          a.user-menu__item(href="/logout")
+            i.fas.fa-sign-out-alt.user-menu__icon
+            span.user-menu__text ログアウト
+
