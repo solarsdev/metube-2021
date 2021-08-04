@@ -139,6 +139,22 @@ export const getLineLoginCallback = (req, res) => {
   })(req, res);
 };
 
+export const getGithubLogin = passport.authenticate('github');
+
+export const getGithubLoginCallback = (req, res) => {
+  passport.authenticate('github', (error, user, profile) => {
+    if (error) {
+      return res.status(401).render('login', {
+        pageTitle: 'Login',
+        errorMessage: error,
+      });
+    }
+
+    console.log(profile);
+    res.end();
+  })(req, res);
+};
+
 export const logout = (req, res) => {
   res.clearCookie(process.env.COOKIE_EID);
   return res.redirect('/');

@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as LineStrategy } from 'passport-line-auth';
+import { Strategy as GitHubStrategy } from 'passport-github';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -88,6 +89,25 @@ passport.use(
         const profile = jwt.decode(params.id_token);
         const user = await User.findOne({ email: 'nothing' });
         return done(null, user, profile);
+      } catch (error) {
+        return done(error);
+      }
+    },
+  ),
+);
+
+passport.use(
+  'github',
+  new GitHubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: 'http://localhost:4000/auth/github/callback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = await User.findOne({ email: 'nothing' });
+        return done(null, user, profile._json);
       } catch (error) {
         return done(error);
       }

@@ -21,7 +21,7 @@ app.set('view engine', 'pug');
 app.disable('etag');
 
 app.use(morgan('dev'));
-app.use(session({ secret: 'session key' }));
+app.use(session({ secret: 'session key', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
