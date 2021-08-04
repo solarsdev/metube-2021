@@ -19,39 +19,57 @@
 - Docker
 - AWS
   - CloudFormation (Infrastructure as Code)
+  - CloudFront (Serve images, videos from CDN)
   - CodePipeline (AWS managed CICD)
   - CodeBuild (using build docker and push to ECR)
   - DocumentDB (AWS managed MongoDB)
+  - S3 (Uploaded images, videos goes into AWS Storage)
 
 ## SourceCode Structure
 
 ```bash
 .
-├── Dockerfile            # Dockerize Definition
-├── README.md
-├── babel.config.json     # ES6 Compiler Environment
-├── buildspec.yml         # AWS CodeBuild Spec
+├── cloudformation
+│   ├── compute-stack.yml    # ECS, Fargate, Load Balancer etc..
+│   ├── database-stack.yml   # not yet
+│   ├── network-stack.yml    # not yet
+│   └── vpc-stack.yml        # vpc, public, private subnets, igw, nat etc..
+├── src
+│   ├── auth
+│   │   └── rds-combined-ca-bundle.pem  # ssl for DocumentDB
+│   ├── client                          # Frontend stuff
+│   │   ├── images
+│   │   ├── js
+│   │   └── scss
+│   ├── controllers
+│   │   ├── userController.js
+│   │   └── videoController.js
+│   ├── db.js
+│   ├── init.js
+│   ├── middlewares.js
+│   ├── models
+│   │   ├── User.js
+│   │   └── Video.js
+│   ├── passport.js
+│   ├── routers
+│   │   ├── authRooter.js
+│   │   ├── rootRouter.js
+│   │   ├── userRouter.js
+│   │   └── videoRouter.js
+│   ├── server.js
+│   └── views
+├── Dockerfile          # to build Docker
+├── babel.config.json
+├── buildspec.yml       # AWS CodeBuild
+├── nodemon.json
 ├── package-lock.json
 ├── package.json
-└── src                   # Source Code
-    ├── controllers
-    │   ├── userController.js
-    │   └── videoController.js
-    ├── routers
-    │   ├── globalRouter.js
-    │   ├── userRouter.js
-    │   └── videoRouter.js
-    ├── server.js
-    └── views
-        ├── base.pug      # Base Template Layout
-        ├── home.pug
-        └── partials
-            └── footer.pug
+└── webpack.config.js   # Webpack config
 ```
 
 ## インフラ構成図
 
-image here
+![インフラ構成図](github/インフラ構成図.png)
 
 ## Dockerize
 
