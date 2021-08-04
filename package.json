@@ -4,8 +4,10 @@
   "description": "Cloning yutube ver 2021 using NodeJS, Express, Mongo and ES6 💖",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/init.js dev",
-    "build": "babel src --out-dir dist --copy-files",
+    "dev:server": "nodemon",
+    "dev:assets": "webpack",
+    "prebuild": "rm -rf dist",
+    "build": "babel src --out-dir dist --copy-files --no-copy-ignored --ignore 'src/client'",
     "start": "node dist/init.js"
   },
   "repository": {
@@ -20,7 +22,7 @@
   "homepage": "https://github.com/solarsdev/metube-2021#readme",
   "dependencies": {
     "@babel/runtime": "^7.14.8",
-    "aws-sdk": "^2.959.0",
+    "aws-sdk": "^2.960.0",
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
     "csurf": "^1.11.0",
@@ -42,6 +44,13 @@
     "@babel/node": "^7.14.9",
     "@babel/plugin-transform-runtime": "^7.14.5",
     "@babel/preset-env": "^7.14.9",
-    "nodemon": "^2.0.12"
+    "babel-loader": "^8.2.2",
+    "css-loader": "^6.2.0",
+    "mini-css-extract-plugin": "^2.1.0",
+    "nodemon": "^2.0.12",
+    "sass": "^1.37.5",
+    "sass-loader": "^12.1.0",
+    "webpack": "^5.48.0",
+    "webpack-cli": "^4.7.2"
   }
 }
