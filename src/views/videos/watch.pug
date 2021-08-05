@@ -1,17 +1,30 @@
 extends ../base.pug
 
 block content
-  video(src=`${storageUrl}/${video.videoPath}`, controls="true", width="780") 
-  h3=video.title
-  p=video.description
-  small=video.createAt
-  ul
-    each hashtag in video.hashtags
-      li=hashtag
-  h3 #{video.meta.views} #{video.meta.views === 1 ? 'view' : 'views'}
-  a(href=`${video.id}/edit`) Edit Video &rarr;
-  br
-  a(href=`${video.id}/delete`) Delete Video &rarr;
+  div#videoContainer
+    video(src=`${storageUrl}/${video.videoPath}`, width="760") 
+    div
+      button#play Play
+      button#mute Mute
+      div
+        span#currentTime 00:00:00
+        span  / 
+        span#totalTime 00:00:00
+      input#volume(type="range", value="0.5", step="0.01", min="0", max="1")
+      input#timeline(type="range", value="0", step="0.1", min="0")
+      div
+        button#fullscreen Enter Full Screen
+  //-
+    h3=video.title
+    p=video.description
+    small=video.createAt
+    ul
+      each hashtag in video.hashtags
+        li=hashtag
+    h3 #{video.meta.views} #{video.meta.views === 1 ? 'view' : 'views'}
+    a(href=`${video.id}/edit`) Edit Video &rarr;
+    br
+    a(href=`${video.id}/delete`) Delete Video &rarr;
 
 block scripts
   script(src="/static/js/videoPlayer.js") 

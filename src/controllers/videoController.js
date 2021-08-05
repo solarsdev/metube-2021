@@ -19,7 +19,7 @@ export const watch = async (req, res) => {
     if (!video) {
       return res.status(404).render('404', { pageTitle: 'Page not found' });
     }
-    return res.render('videos/watch', { pageTitle: `Watching ${video.title}`, video });
+    return res.render('videos/watch', { pageTitle: video.title, video });
   } catch (error) {
     console.log(error);
     return res.redirect('/');
