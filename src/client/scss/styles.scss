@@ -1,6 +1,5 @@
 @import 'config/_reset.scss';
 @import 'config/_variables.scss';
-@import 'config/_fonts.scss';
 
 // Mixins
 @import 'mixins/videoBlock.scss';
@@ -29,6 +28,10 @@ body {
 body {
   background-color: $grey;
   color: $black;
-  font-family: 'Noto Sans JP', sans-serif;
+  body {
+    font-family: Verdana, Roboto, 'Droid Sans', '游ゴシック', YuGothic, 'メイリオ', Meiryo,
+      'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'ＭＳ Ｐゴシック', 'MS PGothic',
+      sans-serif;
+  }
   font-size: 16px;
 }
