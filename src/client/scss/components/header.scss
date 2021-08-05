@@ -16,11 +16,6 @@
     align-items: center;
   }
 
-  &__column-search {
-    padding: 0px 16px;
-    box-sizing: border-box;
-  }
-
   &__column-login {
     justify-content: flex-end;
   }
@@ -78,8 +73,9 @@
     &__input {
       width: 100%;
       max-width: 680px;
-      height: 28px;
+      height: 32px;
       border: 1px solid #cccccc;
+      border-radius: 2px;
       box-sizing: border-box;
       text-indent: 10px;
       font-size: 16px;
@@ -99,10 +95,9 @@
 
     &__submit {
       width: 65px;
-      height: 28px;
+      height: 32px;
       background-color: #f8f8f8;
       border: 1px solid #cccccc;
-      border-left: none;
       display: flex;
       align-items: center;
       justify-content: center;

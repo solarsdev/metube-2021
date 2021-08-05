@@ -1,5 +1,16 @@
 mixin videoBlock(video = {})
-  a.video(href=`/videos/${video._id}`) 
-    video.video__thumbnail(src=video.videoPath, controls=true)
-    p.video__title=video.title
-    p.video__views=video.meta.views
+  .video
+    a.video__link--all(href=`/videos/${video._id}`)
+    video.video__thumbnail(src=`${storageUrl}/${video.videoPath}`)
+    .video__info
+      .video__user
+        a.video__link--user(href=`/users/${video.owner._id}`)
+          img.video__user-avatar(src=`${storageUrl}/${video.owner.avatarPath}`)
+      .video__data
+        .video__title
+          span=video.title
+        .video__owner
+          a.video__link--user(href=`/users/${video.owner._id}`)
+            span=video.owner.email
+        .video__views
+          span=video.meta.views

@@ -1,25 +1,73 @@
 .video {
-  margin: 0px 8px;
-  color: inherit;
-  text-decoration: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr min-content;
+  position: relative;
+
+  &__link {
+    &--all,
+    &--user {
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    &--all {
+      z-index: 1;
+    }
+    &--user {
+      z-index: 2;
+      &:hover {
+        color: black;
+      }
+    }
+  }
 
   &__thumbnail {
     width: 100%;
+    border-radius: 4px;
+  }
+
+  &__info {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+  }
+
+  &__user {
+    padding-top: 6px;
+    position: relative;
+  }
+
+  &__user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+  &__data {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 40px 20px 20px;
   }
 
   &__title {
-    font-size: 18px;
-    font-weight: 500;
-    padding: 5px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__owner,
+  &__views {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  &__owner {
+    position: relative;
   }
 
   &__views {
-    font-size: 16px;
-    color: rgba(0, 0, 0, 0.5);
-    padding: 5px;
-
     &::after {
-      content: '回視聴';
+      content: ' 回視聴';
     }
   }
 }

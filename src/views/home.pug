@@ -2,13 +2,10 @@ extends base.pug
 include mixins/videoBlock.pug
 
 block content
-  each video in videos
-    +videoBlock(video)
-    +videoBlock(video)
-    +videoBlock(video)
-    +videoBlock(video)
-    +videoBlock(video)
-    +videoBlock(video)
-    +videoBlock(video)
-  else
-    li nothing found.
+  .videos
+    each video in videos
+      +videoBlock(video)
+      +videoBlock(video)
+      +videoBlock(video)
+    else
+      li nothing found.

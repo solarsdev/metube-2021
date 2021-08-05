@@ -4,7 +4,7 @@ import Video from '../models/Video';
 
 export const home = async (req, res) => {
   try {
-    const videos = await Video.find({}).sort({ createdAt: 'desc' });
+    const videos = await Video.find({}).populate('owner').sort({ createdAt: 'desc' });
     return res.render('home', { pageTitle: 'Home', videos });
   } catch (error) {
     console.log(error);
