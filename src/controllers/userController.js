@@ -290,26 +290,9 @@ export const postEdit = async (req, res) => {
   try {
     const {
       body: { name },
-      file,
     } = req;
     const user = res.locals.user;
-    const avatarUrl = file ? file.key : null;
-    const filter = { name };
-
-    if (avatarUrl) {
-      filter.avatar = {
-        avatarType: 'internal',
-        avatarUrl,
-      };
-    }
-
-    await Promise.all([
-      User.findByIdAndUpdate(user._id, filter),
-      avatarUrl && user.avatar.avatarType === 'internal'
-        ? deleteStorageFile(user.avatar.avatarUrl)
-        : Promise.resolve(),
-    ]);
-
+    await User.findByIdAndUpdate(user._id, { name });
     return res.redirect('/users/edit');
   } catch (error) {
     console.log(error);
@@ -347,6 +330,33 @@ export const postChangePassword = async (req, res) => {
     user.password = newPassword;
     await user.save();
     return res.redirect('/logout');
+  } catch (error) {
+    console.log(error);
+    return res.redirect('/');
+  }
+};
+
+export const putAvatar = async (req, res) => {
+  try {
+    const { file } = req;
+    const user = res.locals.user;
+    const avatarUrl = file ? file.key : null;
+
+    if (avatarUrl) {
+      await Promise.all([
+        User.findByIdAndUpdate(user._id, {
+          avatar: {
+            avatarType: 'internal',
+            avatarUrl,
+          },
+        }),
+        avatarUrl && user.avatar.avatarType === 'internal'
+          ? deleteStorageFile(user.avatar.avatarUrl)
+          : Promise.resolve(),
+      ]);
+    }
+
+    return res.redirect('/users/edit');
   } catch (error) {
     console.log(error);
     return res.redirect('/');
