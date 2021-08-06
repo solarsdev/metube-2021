@@ -11,31 +11,33 @@ header.header
       input.search__input(type="text", name="search_query", placeholder="検索")
       button.search__submit(type="submit")
         i.fas.fa-search
-  .header__column.header__column-login
+  .auth.header__column.header__column-login
     if !loggedIn
-      a.header__login(href="/login")
-        i.fas.fa-sign-in-alt.header__login-icon
-        span.header__login-text ログイン
-      a.header__join(href="/join")
-        i.fas.fa-user-plus.header__join-icon
-        span.header__join-text 新規登録
+      a.auth__link(href="/login")
+        i.fas.fa-sign-in-alt
+        span ログイン
+      a.auth__link(href="/join")
+        i.fas.fa-user-plus
+        span 新規登録
     else
-      li 
-        a(href="/videos/upload") Upload
-      li 
-        a(href=`/users/${user._id}`) Profile
-      img.header__avatar(src=`${storageUrl}/${user.avatarPath}`)
+      .auth__link
+        i.fas.fa-video
+        span 動画収録
+      a.auth__link(href="/videos/upload")
+        i.fas.fa-upload
+        span 動画作成
+      img.auth__link.header__avatar(src=avatarPath)
       .user-menu.user-menu--hide
         .user-menu__profile
-          img.user-menu__avatar(src=`${storageUrl}/${user.avatarPath}`)
+          img.user-menu__avatar(src=avatarPath)
           .user-menu__names
-            span.user-menu__name=`${user.lastName ? user.lastName : ''} ${user.firstName ? user.firstName : ''}`
+            span.user-menu__name=user.name
             span.user-menu__email=user.email
         .user-menu__controls
           .user-menu__item
             img.user-menu__icon--image(src="/static/images/beginner.svg")
             span.user-menu__text 初めての方へ
-          .user-menu__item
+          a.user-menu__item(href=`/users/${user._id}`)
             i.fas.fa-cog.user-menu__icon
             span.user-menu__text 設定
           a.user-menu__item(href="/logout")

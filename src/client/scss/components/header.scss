@@ -1,5 +1,3 @@
-@import '../mixins/common.scss';
-
 .header {
   height: 56px;
   padding: 0px 16px;
@@ -16,10 +14,6 @@
     align-items: center;
   }
 
-  &__column-login {
-    justify-content: flex-end;
-  }
-
   .menu {
     width: 40px;
     height: 40px;
@@ -32,7 +26,18 @@
     justify-content: center;
     align-items: center;
 
-    @include btnEffect(#ffffff, #494949);
+    background-position: center;
+    transition: background 0.3s;
+
+    &:hover {
+      background: #ffffff radial-gradient(circle, transparent 1%, #ffffff 1%) center/15000%;
+    }
+
+    &:active {
+      background-color: #494949;
+      background-size: 100%;
+      transition: background 0s;
+    }
   }
 
   .logo {
@@ -106,16 +111,25 @@
     }
   }
 
-  &__beginner {
-    @include headerLinks;
-  }
+  .auth {
+    justify-content: flex-end;
+    box-sizing: border-box;
+    padding-right: 16px;
 
-  &__login {
-    @include headerLinks;
-  }
+    &__link {
+      text-decoration: none;
+      color: #6e6e6e;
+      transition: color 0.25s ease-in-out;
+      margin-left: 16px;
 
-  &__join {
-    @include headerLinks;
+      &:hover {
+        color: $black;
+      }
+
+      i {
+        margin-right: 5px;
+      }
+    }
   }
 
   &__avatar {
@@ -139,7 +153,7 @@
   top: 50px;
   right: 16px;
   background-color: white;
-  z-index: 1;
+  z-index: 2;
   transition: visibility 0.1s cubic-bezier(0.64, 0, 0.78, 0),
     opacity 0.1s cubic-bezier(0.64, 0, 0.78, 0);
   animation: scale-down-ver-down 0.1s cubic-bezier(0.64, 0, 0.78, 0) both;

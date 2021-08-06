@@ -4,13 +4,41 @@ import passport from 'passport';
 import { deleteStorageFile } from '../middlewares';
 import User from '../models/User';
 
+const createLoginCookie = (user, res) => {
+  const token = jwt.sign(
+    {
+      _id: user._id,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: '14d',
+      issuer: process.env.JWT_ISSUER,
+    },
+  );
+
+  res.cookie(process.env.COOKIE_EID, token, {
+    httpOnly: true,
+    maxAge: 3600000 * 24 * 14,
+    secure: true,
+    signed: true,
+  });
+};
+
 export const getJoin = (req, res) =>
   res.render('join', { pageTitle: 'Join', csrfToken: req.csrfToken() });
 
 export const postJoin = async (req, res) => {
   try {
-    const { email, password, password2, name, location } = req.body;
-    if (password !== password2) {
+    const { email, name, password, passwordConfirm, agree } = req.body;
+    if (!name) {
+      return res.status(400).render('join', {
+        pageTitle: 'Join',
+        errorMessage: 'Please enter your name',
+        csrfToken: req.csrfToken(),
+      });
+    }
+
+    if (password !== passwordConfirm) {
       return res.status(400).render('join', {
         pageTitle: 'Join',
         errorMessage: 'Password confirmation does not match',
@@ -18,31 +46,32 @@ export const postJoin = async (req, res) => {
       });
     }
 
-    const user = await User.create({
+    if (agree !== 'on') {
+      return res.status(400).render('join', {
+        pageTitle: 'Join',
+        errorMessage: 'Please check agreement',
+        csrfToken: req.csrfToken(),
+      });
+    }
+
+    let user = await User.exists({ email });
+
+    if (user) {
+      return res.status(400).render('join', {
+        pageTitle: 'Join',
+        errorMessage: 'Email is already taken',
+        csrfToken: req.csrfToken(),
+      });
+    }
+
+    user = await User.create({
       email,
-      password,
       name,
-      location,
+      password,
+      socialOnly: false,
     });
 
-    const token = jwt.sign(
-      {
-        _id: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '14d',
-        issuer: process.env.JWT_ISSUER,
-      },
-    );
-
-    res.cookie(process.env.COOKIE_EID, token, {
-      httpOnly: true,
-      maxAge: 3600000 * 24 * 14,
-      secure: true,
-      signed: true,
-    });
-
+    createLoginCookie(user, res);
     return res.redirect('/');
   } catch (error) {
     console.log(error);
@@ -76,22 +105,7 @@ export const postLogin = (req, res) => {
         });
       }
 
-      const token = jwt.sign(
-        {
-          _id: user._id,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: '14d',
-          issuer: process.env.JWT_ISSUER,
-        },
-      );
-      res.cookie(process.env.COOKIE_EID, token, {
-        httpOnly: true,
-        maxAge: 3600000 * 24 * 14,
-        secure: true,
-        signed: true,
-      });
+      createLoginCookie(user, res);
       return res.redirect('/');
     })(req, res);
   } catch (error) {
@@ -107,17 +121,41 @@ export const postLogin = (req, res) => {
 export const getGoogleLogin = passport.authenticate('google', { scope: ['email', 'profile'] });
 
 export const getGoogleLoginCallback = (req, res) => {
-  passport.authenticate('google', (error, user, profile) => {
-    if (error) {
-      return res.status(401).render('login', {
-        pageTitle: 'Login',
-        errorMessage: error,
-      });
-    }
+  try {
+    passport.authenticate('google', async (error, profile) => {
+      if (error) {
+        return res.status(401).render('login', {
+          pageTitle: 'Login',
+          errorMessage: error,
+          csrfToken: req.csrfToken(),
+        });
+      }
 
-    console.log(profile);
-    res.end();
-  })(req, res);
+      const { email, name, picture: avatarUrl } = profile;
+      let user = await User.findOne({ email });
+
+      if (user) {
+        createLoginCookie(user, res);
+        return res.redirect('/');
+      }
+
+      user = await User.create({
+        email,
+        name,
+        avatar: {
+          isExternal: true,
+          avatarUrl,
+        },
+        socialOnly: true,
+      });
+
+      createLoginCookie(user, res);
+      return res.redirect('/');
+    })(req, res);
+  } catch (error) {
+    console.log(error);
+    return res.redirect('/');
+  }
 };
 
 export const getLineLogin = passport.authenticate('line', {
@@ -125,24 +163,51 @@ export const getLineLogin = passport.authenticate('line', {
 });
 
 export const getLineLoginCallback = (req, res) => {
-  passport.authenticate('line', (error, user, profile) => {
-    // line needs to be check profile.email (if user dont permit to send, maybe null)
+  passport.authenticate('line', async (error, profile) => {
     if (error) {
       return res.status(401).render('login', {
         pageTitle: 'Login',
         errorMessage: error,
+        csrfToken: req.csrfToken(),
       });
     }
 
-    console.log(profile);
-    res.end();
+    // line needs to be check profile.email (if user dont permit to send, maybe null)
+    if (!('email' in profile)) {
+      return res.status(401).render('login', {
+        pageTitle: 'Login',
+        errorMessage: 'Please permit to send email from line',
+        csrfToken: req.csrfToken(),
+      });
+    }
+
+    const { email, name, picture: avatarUrl } = profile;
+    let user = await User.findOne({ email });
+
+    if (user) {
+      createLoginCookie(user, res);
+      return res.redirect('/');
+    }
+
+    user = await User.create({
+      email,
+      name,
+      avatar: {
+        isExternal: true,
+        avatarUrl,
+      },
+      socialOnly: true,
+    });
+
+    createLoginCookie(user, res);
+    return res.redirect('/');
   })(req, res);
 };
 
 export const getGithubLogin = passport.authenticate('github');
 
 export const getGithubLoginCallback = (req, res) => {
-  passport.authenticate('github', (error, user, profile) => {
+  passport.authenticate('github', async (error, profile) => {
     if (error) {
       return res.status(401).render('login', {
         pageTitle: 'Login',
@@ -150,8 +215,26 @@ export const getGithubLoginCallback = (req, res) => {
       });
     }
 
-    console.log(profile);
-    res.end();
+    const { email, login: name, avatar_url: avatarUrl } = profile;
+    let user = await User.findOne({ email });
+
+    if (user) {
+      createLoginCookie(user, res);
+      return res.redirect('/');
+    }
+
+    user = await User.create({
+      email,
+      name,
+      avatar: {
+        isExternal: true,
+        avatarUrl,
+      },
+      socialOnly: true,
+    });
+
+    createLoginCookie(user, res);
+    return res.redirect('/');
   })(req, res);
 };
 

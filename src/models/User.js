@@ -4,12 +4,15 @@ import findOrCrate from 'mongoose-findorcreate';
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  lastName: { type: String, required: true },
-  firstName: { type: String, required: true },
-  avatarPath: String,
+  name: { type: String, required: true },
+  password: { type: String },
+  avatar: {
+    isExternal: Boolean,
+    avatarUrl: String,
+    avatarKey: String,
+  },
   videos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
-  googleId: String,
+  socialOnly: { type: Boolean, required: true },
 });
 
 userSchema.pre('save', async function () {

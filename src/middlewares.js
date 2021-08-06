@@ -47,10 +47,23 @@ export const csrfMiddleware = (err, req, res, next) => {
 
 export const localMiddleware = async (req, res, next) => {
   res.locals.siteName = 'MeTube';
-  res.locals.storageUrl = process.env.STORAGE_URL;
+
   const user = await getUserFromToken(req, res);
   res.locals.loggedIn = Boolean(user);
   res.locals.user = user || {};
+
+  if (user) {
+    const {
+      avatar: { isExternal, avatarUrl, avatarKey },
+    } = user;
+
+    if (isExternal) {
+      res.locals.avatarPath = avatarUrl;
+    } else {
+      res.locals.avatarPath = `${process.env.STORAGE_URL}/${avatarKey}`;
+    }
+  }
+
   return next();
 };
 

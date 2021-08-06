@@ -23,6 +23,11 @@ passport.use(
       if (!user) {
         return done(null, false, { message: 'Email/Password is wrong' });
       }
+      if (user.socialOnly) {
+        return done(null, false, {
+          message: 'Social login user, you can set password after social login',
+        });
+      }
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         return done(null, false, { message: 'Email/Password is wrong' });
@@ -64,8 +69,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const user = await User.findOne({ email: profile._json.email });
-        return done(null, user, profile._json);
+        return done(null, profile._json);
       } catch (error) {
         return done(error);
       }
@@ -87,8 +91,7 @@ passport.use(
     async (accessToken, refreshToken, params, _, done) => {
       try {
         const profile = jwt.decode(params.id_token);
-        const user = await User.findOne({ email: 'nothing' });
-        return done(null, user, profile);
+        return done(null, profile);
       } catch (error) {
         return done(error);
       }
@@ -106,8 +109,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const user = await User.findOne({ email: 'nothing' });
-        return done(null, user, profile._json);
+        return done(null, profile._json);
       } catch (error) {
         return done(error);
       }

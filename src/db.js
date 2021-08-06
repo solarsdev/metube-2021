@@ -13,8 +13,8 @@ let options = {
   useUnifiedTopology: true,
   useCreateIndex: true,
   retryWrites: false,
-  ssl: true,
-  sslValidate: !isProductionEnv ? false : true, // for dev purpose
+  ssl: isProductionEnv,
+  sslValidate: isProductionEnv,
   sslCA: [fs.readFileSync(`${__dirname}/auth/rds-combined-ca-bundle.pem`)],
 };
 
