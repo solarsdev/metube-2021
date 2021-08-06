@@ -70,7 +70,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:4000/auth/google/callback',
+      callbackURL: `${process.env.SITE_DOMAIN}/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -88,7 +88,7 @@ passport.use(
     {
       channelID: process.env.LINE_CHANNEL_ID,
       channelSecret: process.env.LINE_CHANNEL_SECRET,
-      callbackURL: 'http://localhost:4000/auth/line/callback',
+      callbackURL: `${process.env.SITE_DOMAIN}/auth/line/callback`,
       scope: ['profile', 'openid', 'email'],
       botPrompt: 'normal',
       uiLocales: 'ja-JP',
@@ -110,7 +110,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: 'http://localhost:4000/auth/github/callback',
+      callbackURL: `${process.env.SITE_DOMAIN}/auth/github/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
