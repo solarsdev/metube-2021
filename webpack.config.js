@@ -7,8 +7,6 @@ module.exports = {
     index: './src/client/js/index.js',
     videoPlayer: './src/client/js/videoPlayer.js',
   },
-  mode: 'development',
-  watch: true,
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
