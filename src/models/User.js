@@ -7,12 +7,13 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   password: { type: String },
   avatar: {
-    isExternal: Boolean,
-    avatarUrl: String,
-    avatarKey: String,
+    avatarType: { type: String, required: true, default: 'none' },
+    avatarUrl: { type: String, default: null },
   },
   videos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
-  socialOnly: { type: Boolean, required: true },
+  googleId: { type: String, unique: true },
+  lineId: { type: String, unique: true },
+  githubId: { type: String, unique: true },
 });
 
 userSchema.pre('save', async function () {

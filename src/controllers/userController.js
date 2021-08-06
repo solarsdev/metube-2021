@@ -131,22 +131,32 @@ export const getGoogleLoginCallback = (req, res) => {
         });
       }
 
-      const { email, name, picture: avatarUrl } = profile;
-      let user = await User.findOne({ email });
+      const { email, name, picture: avatarUrl, sub: googleId } = profile;
+      let user = await User.findOne({ googleId }).select('_id');
 
       if (user) {
         createLoginCookie(user, res);
         return res.redirect('/');
       }
 
+      user = await User.findOne({ email });
+      // 이메일은 있는데 구글연동이 안되어있음 (자동연동)
+      if (user) {
+        user.googleId = googleId;
+        await user.save();
+        createLoginCookie(user, res);
+        return res.redirect('/');
+      }
+
+      // 구글연동도 안되어 있고 이메일도 없음 (신규)
       user = await User.create({
         email,
         name,
         avatar: {
-          isExternal: true,
+          avatarType: 'external',
           avatarUrl,
         },
-        socialOnly: true,
+        googleId,
       });
 
       createLoginCookie(user, res);
@@ -163,79 +173,109 @@ export const getLineLogin = passport.authenticate('line', {
 });
 
 export const getLineLoginCallback = (req, res) => {
-  passport.authenticate('line', async (error, profile) => {
-    if (error) {
-      return res.status(401).render('login', {
-        pageTitle: 'Login',
-        errorMessage: error,
-        csrfToken: req.csrfToken(),
+  try {
+    passport.authenticate('line', async (error, profile) => {
+      if (error) {
+        return res.status(401).render('login', {
+          pageTitle: 'Login',
+          errorMessage: error,
+          csrfToken: req.csrfToken(),
+        });
+      }
+
+      // line needs to be check profile.email (if user dont permit to send, maybe null)
+      if (!profile.hasOwnProperty('email')) {
+        return res.status(401).render('login', {
+          pageTitle: 'Login',
+          errorMessage: 'Please permit to send email from line',
+          csrfToken: req.csrfToken(),
+        });
+      }
+
+      const { email, name, picture: avatarUrl, sub: lineId } = profile;
+      let user = await User.findOne({ lineId });
+
+      if (user) {
+        createLoginCookie(user, res);
+        return res.redirect('/');
+      }
+
+      user = await User.findOne({ email });
+      // 이메일은 있는데 라인연동이 안되어있음 (자동연동)
+      if (user) {
+        user.lineId = lineId;
+        await user.save();
+        createLoginCookie(user, res);
+        return res.redirect('/');
+      }
+
+      // 라인연동도 안되어 있고 이메일도 없음 (신규)
+      user = await User.create({
+        email,
+        name,
+        avatar: {
+          avatarType: 'external',
+          avatarUrl,
+        },
+        lineId,
       });
-    }
 
-    // line needs to be check profile.email (if user dont permit to send, maybe null)
-    if (!('email' in profile)) {
-      return res.status(401).render('login', {
-        pageTitle: 'Login',
-        errorMessage: 'Please permit to send email from line',
-        csrfToken: req.csrfToken(),
-      });
-    }
-
-    const { email, name, picture: avatarUrl } = profile;
-    let user = await User.findOne({ email });
-
-    if (user) {
       createLoginCookie(user, res);
       return res.redirect('/');
-    }
-
-    user = await User.create({
-      email,
-      name,
-      avatar: {
-        isExternal: true,
-        avatarUrl,
-      },
-      socialOnly: true,
-    });
-
-    createLoginCookie(user, res);
+    })(req, res);
+  } catch (error) {
+    console.log(error);
     return res.redirect('/');
-  })(req, res);
+  }
 };
 
 export const getGithubLogin = passport.authenticate('github');
 
 export const getGithubLoginCallback = (req, res) => {
-  passport.authenticate('github', async (error, profile) => {
-    if (error) {
-      return res.status(401).render('login', {
-        pageTitle: 'Login',
-        errorMessage: error,
+  try {
+    passport.authenticate('github', async (error, profile) => {
+      if (error) {
+        return res.status(401).render('login', {
+          pageTitle: 'Login',
+          errorMessage: error,
+        });
+      }
+
+      const { email, login: name, avatar_url: avatarUrl, id: githubId } = profile;
+      let user = await User.findOne({ githubId });
+
+      if (user) {
+        createLoginCookie(user, res);
+        return res.redirect('/');
+      }
+
+      user = await User.findOne({ email });
+      // 이메일은 있는데 깃허브연동이 안되어있음 (자동연동)
+      if (user) {
+        user.githubId = githubId;
+        await user.save();
+        createLoginCookie(user, res);
+        return res.redirect('/');
+      }
+
+      // 깃허브연동도 안되어 있고 이메일도 없음 (신규)
+      user = await User.create({
+        email,
+        name,
+        avatar: {
+          avatarType: 'external',
+          avatarUrl,
+        },
+        githubId,
       });
-    }
 
-    const { email, login: name, avatar_url: avatarUrl } = profile;
-    let user = await User.findOne({ email });
-
-    if (user) {
       createLoginCookie(user, res);
       return res.redirect('/');
-    }
-
-    user = await User.create({
-      email,
-      name,
-      avatar: {
-        isExternal: true,
-        avatarUrl,
-      },
-      socialOnly: true,
-    });
-
-    createLoginCookie(user, res);
+    })(req, res);
+  } catch (error) {
+    console.log(error);
     return res.redirect('/');
-  })(req, res);
+  }
 };
 
 export const logout = (req, res) => {
@@ -249,33 +289,26 @@ export const getEdit = (req, res) =>
 export const postEdit = async (req, res) => {
   try {
     const {
-      body: { email, name, location },
+      body: { name },
       file,
     } = req;
     const user = res.locals.user;
-    const avatarPath = file && 'key' in file ? file.key : user.avatarPath;
+    const avatarUrl = file ? file.key : null;
+    const filter = { name };
 
-    if (email !== user.email) {
-      const emailAlreadyTaken = await User.exists({ email });
-      if (emailAlreadyTaken) {
-        return res.status(400).render('users/edit', {
-          pageTitle: 'Edit profile',
-          errorMessage: 'Email is already taken',
-          csrfToken: req.csrfToken(),
-        });
-      }
+    if (avatarUrl) {
+      filter.avatar = {
+        avatarType: 'internal',
+        avatarUrl,
+      };
     }
 
-    await User.findByIdAndUpdate(user._id, {
-      email,
-      name,
-      location,
-      avatarPath,
-    });
-
-    if (avatarPath !== user.avatarPath && user.avatarPath) {
-      await deleteStorageFile(user.avatarPath);
-    }
+    await Promise.all([
+      User.findByIdAndUpdate(user._id, filter),
+      avatarUrl && user.avatar.avatarType === 'internal'
+        ? deleteStorageFile(user.avatar.avatarUrl)
+        : Promise.resolve(),
+    ]);
 
     return res.redirect('/users/edit');
   } catch (error) {
@@ -325,9 +358,14 @@ export const deleteAvatar = async (req, res) => {
     const user = res.locals.user;
     await Promise.all([
       User.findByIdAndUpdate(user._id, {
-        $unset: { avatarPath: true },
+        avatar: {
+          avatarType: 'none',
+          avatarUrl: null,
+        },
       }),
-      deleteStorageFile(user.avatarPath),
+      user.avatar.avatarType === 'internal'
+        ? deleteStorageFile(user.avatar.avatarUrl)
+        : Promise.resolve(),
     ]);
     return res.redirect('/users/edit');
   } catch (error) {

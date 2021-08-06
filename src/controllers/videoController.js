@@ -128,7 +128,7 @@ export const postUpload = async (req, res) => {
       file,
     } = req;
 
-    const videoPath = file && 'key' in file ? file.key : null;
+    const videoPath = file && file.hasOwnProperty('key') ? file.key : null;
 
     if (!videoPath) {
       return res.status(400).render('videos/upload', {

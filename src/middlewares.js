@@ -52,15 +52,17 @@ export const localMiddleware = async (req, res, next) => {
   res.locals.loggedIn = Boolean(user);
   res.locals.user = user || {};
 
-  if (user) {
+  if (res.locals.loggedIn) {
     const {
-      avatar: { isExternal, avatarUrl, avatarKey },
+      avatar: { avatarType, avatarUrl },
     } = user;
 
-    if (isExternal) {
+    if (avatarType === 'external') {
       res.locals.avatarPath = avatarUrl;
+    } else if (avatarType === 'internal') {
+      res.locals.avatarPath = `${process.env.STORAGE_URL}/${avatarUrl}`;
     } else {
-      res.locals.avatarPath = `${process.env.STORAGE_URL}/${avatarKey}`;
+      res.locals.avatarPath = '/static/images/basic_profile.png';
     }
   }
 

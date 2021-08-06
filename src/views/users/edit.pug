@@ -3,17 +3,17 @@ extends ../base.pug
 block content
   if errorMessage
     p=errorMessage
-  if user.avatarPath
-    img(src=`${storageUrl}/${user.avatarPath}`, alt="avatar", width="100", height="100")
+  img(src=avatarPath, alt="avatar", width="100", height="100")
   form(action=`?_csrf=${csrfToken}` method="post", enctype="multipart/form-data")
     label(for="avatar") Avatar
     input(type="file", name="avatar", id="avatar", accept="image/*") 
-    input(type="email", name="email", placeholder="Email", value=user.email, required)
     input(type="text", name="name", placeholder="Name", value=user.name, required)
-    input(type="text", name="location", placeholder="Location", value=user.location, required)
     input(type="submit", value="Save")
+  p Google: #{user.googleId}
+  p Line: #{user.lineId}
+  p GitHub: #{user.githubId}
   hr
-  if user.avatarPath
+  if avatarPath
     a(href="avatar/delete") Delete avatar &rarr;
     br
   a(href="change-password") Change password &rarr; 

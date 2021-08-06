@@ -20,18 +20,23 @@ passport.use(
   new LocalStrategy(passportConfig, async (email, password, done) => {
     try {
       const user = await User.findOne({ email });
+
       if (!user) {
         return done(null, false, { message: 'Email/Password is wrong' });
       }
-      if (user.socialOnly) {
+
+      if (!user.password) {
         return done(null, false, {
           message: 'Social login user, you can set password after social login',
         });
       }
+
       const passwordMatch = await bcrypt.compare(password, user.password);
+
       if (!passwordMatch) {
         return done(null, false, { message: 'Email/Password is wrong' });
       }
+
       return done(null, user);
     } catch (error) {
       return done(error);
