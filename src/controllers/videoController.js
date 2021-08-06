@@ -197,7 +197,7 @@ export const postUpload = async (req, res) => {
   }
 };
 
-export const postTranscodeUpdate = (req, res) => {
+export const postTranscodeUpdate = async (req, res) => {
   const { jobId } = req.params;
   await Video.findOneAndUpdate(
     {
