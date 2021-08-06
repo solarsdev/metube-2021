@@ -7,6 +7,7 @@ import passport from 'passport';
 import './passport';
 import { csrfMiddleware, localMiddleware, setHeaderMiddleware } from './middlewares';
 
+import apiRouter from './routers/apiRooter';
 import authRouter from './routers/authRooter';
 import rootRouter from './routers/rootRouter';
 import userRouter from './routers/userRouter';
@@ -32,6 +33,7 @@ app.use(setHeaderMiddleware);
 app.use(localMiddleware);
 app.use('/static', express.static(isProductionEnv ? `${__dirname}/assets` : 'dist/assets'));
 app.use('/', rootRouter);
+app.use('/api', apiRouter);
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/videos', videoRouter);

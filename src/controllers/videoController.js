@@ -1,10 +1,17 @@
 import { deleteStorageFile } from '../middlewares';
 import User from '../models/User';
 import Video from '../models/Video';
+import { ElasticTranscoderClient, CreateJobCommand } from '@aws-sdk/client-elastic-transcoder';
+
+const isProductionEnv = process.env.NODE_ENV === 'production';
 
 export const home = async (req, res) => {
   try {
-    const videos = await Video.find({}).populate('owner').sort({ createdAt: 'desc' });
+    const videos = isProductionEnv
+      ? await Video.find({ fileInfo: { job: { status: 'Complete' } } })
+          .populate('owner')
+          .sort({ createdAt: 'desc' })
+      : await Video.find({}).populate('owner').sort({ createdAt: 'desc' });
     return res.render('home', { pageTitle: 'Home', videos });
   } catch (error) {
     console.log(error);
@@ -128,9 +135,9 @@ export const postUpload = async (req, res) => {
       file,
     } = req;
 
-    const videoPath = file && file.hasOwnProperty('key') ? file.key : null;
+    const videoKey = file ? file.key : null;
 
-    if (!videoPath) {
+    if (!videoKey) {
       return res.status(400).render('videos/upload', {
         pageTitle: 'Upload Video',
         errorMessage: 'Missing video',
@@ -138,11 +145,41 @@ export const postUpload = async (req, res) => {
       });
     }
 
+    // transcode
+    const etClient = isProductionEnv
+      ? new ElasticTranscoderClient()
+      : new ElasticTranscoderClient({
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          },
+        });
+    const command = new CreateJobCommand({
+      PipelineId: process.env.PIPELINE_ID,
+      Input: {
+        Key: videoKey,
+      },
+      Output: {
+        PresetId: '1351620000001-000040', // 360p prset
+        Key: `${videoKey}-360p`,
+        ThumbnailPattern: `${videoKey}-{count}`,
+      },
+    });
+    const {
+      Job: { Id: jobId, Status: jobStatus },
+    } = await etClient.send(command);
+
     const video = await Video.create({
       title,
       description,
       hashtags: Video.transformHashtags(hashtags),
-      videoPath,
+      fileInfo: {
+        job: {
+          id: jobId,
+          status: jobStatus,
+        },
+        videoKey,
+      },
       owner: res.locals.user._id,
     });
 
@@ -158,4 +195,25 @@ export const postUpload = async (req, res) => {
       csrfToken: req.csrfToken(),
     });
   }
+};
+
+export const postTranscodeUpdate = (req, res) => {
+  const { jobId } = req.params;
+  await Video.findOneAndUpdate(
+    {
+      fileInfo: {
+        job: {
+          id: jobId,
+        },
+      },
+    },
+    {
+      fileInfo: {
+        job: {
+          status: 'Complete',
+        },
+      },
+    },
+  );
+  return res.sendStatus(200);
 };

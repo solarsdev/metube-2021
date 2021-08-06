@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/solarsdev/metube-2021#readme",
   "dependencies": {
+    "@aws-sdk/client-elastic-transcoder": "^3.25.0",
     "@babel/runtime": "^7.14.8",
     "aws-sdk": "^2.962.0",
     "bcrypt": "^5.0.1",

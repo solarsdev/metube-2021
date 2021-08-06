@@ -9,7 +9,13 @@ const videoSchema = new mongoose.Schema({
     views: { type: Number, required: true, default: 0 },
     rating: { type: Number, required: true, default: 0 },
   },
-  videoPath: { type: String, required: true },
+  fileInfo: {
+    job: {
+      id: String,
+      status: String,
+    },
+    videoKey: String,
+  },
   owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
 });
 

@@ -1,7 +1,7 @@
 mixin videoBlock(video = {})
   .video
     a.video__link--all(href=`/videos/${video._id}`)
-    video.video__thumbnail(src=`${storageUrl}/${video.videoPath}`)
+    img.video__thumbnail(src=`${storageUrl}/${video.fileInfo.videoKey}-00001.png`)
     .video__info
       .video__user
         a.video__link--user(href=`/users/${video.owner._id}`)

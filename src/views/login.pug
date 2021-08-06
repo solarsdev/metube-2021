@@ -5,11 +5,10 @@ block content
     span=errorMessage
   .login
     .login__header
-      h1
-        i.fas.fa-sign-in-alt.login__header-icon
-        span.login__header-text ログイン
-    .login__main 
-      .login__social.social-login
+      i.fas.fa-sign-in-alt
+      span ログイン
+    .login__main
+      .social-login
         .social-login__header 
           span 外部サービスでログイン
         a.social-login__btn.social-login__btn--github(href="/auth/github")
@@ -24,7 +23,7 @@ block content
         .social-login__footer 
           span 取得した情報はログイン以外の目的に使われることはありません。
           span ソーシャルログインの利用はメールアドレスが取得され、会員識別で利用します。同意する場合のみご利用ください。
-      .login__email.email-login
+      .email-login
         .email-login__header
           span メールアドレスでログイン
         form.email-login__form(method="post")
@@ -35,7 +34,7 @@ block content
             input.email-login__logged-on-checkbox#email-login__logged-on-checkbox(type="checkbox", name="loggedOn")
             label.email-login__logged-on-text(for="email-login__logged-on-checkbox") ログインしたままにする
           button.email-login__submit(type="submit") ログイン
-        a.email-login__forgot(href="asd")
+        a.email-login__forgot(href="/404")
           span パスワードを忘れた方はこちら
     a.login__footer(href="/join")
       span まだアカウントをお持ちではない方は

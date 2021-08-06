@@ -7,9 +7,8 @@
   margin: 32px;
 
   &__header {
-    font-size: 28px;
-
-    &-icon {
+    font-size: 24px;
+    i {
       margin-right: 10px;
     }
   }
@@ -160,14 +159,14 @@
     box-sizing: border-box;
     text-decoration: none;
 
-    &--facebook {
+    &--github {
       color: #ffffff;
-      background: #2f5197;
+      background: #333;
     }
 
-    &--twitter {
+    &--line {
       color: #ffffff;
-      background: #1da0f2;
+      background: #06c755;
     }
 
     &--google {
@@ -257,7 +256,7 @@
   }
 
   &__agree {
-    margin-bottom: 8px;
+    margin: 16px 0px;
   }
 
   &__submit {

@@ -7,7 +7,7 @@ block content
     .join__header 
       h1
         i.fas.fa-user-plus.join__header-icon
-        span.join__header-text アカウント新規登録
+        span.join__header-text 新規登録
     .join__progress.progress
       .progress__step.progress__step1.progress__current
         span 新規登録
@@ -16,25 +16,24 @@ block content
       .progress__step.progress__step3 
         span 登録完了
     a.join__login(href="/login")
-      span すでにアカウントをお持ちの方は
+      span すでにお持ちの方は
       span.join__login-link こちら
       i.fas.fa-chevron-right.join__login-icon
     .join__social.social-join
       .social-join__header 
         span 外部サービスで新規登録
-      .social-join__btn.social-join__btn--facebook
-        i.fab.fa-facebook.social-join__btn-icon
-        span.social-join__desc.social-join__desc--facebook Facebookで登録
-      .social-join__btn.social-join__btn--twitter
-        i.fab.fa-twitter.social-join__btn-icon
-        span.social-join__desc.social-join__desc--twitter Twitterで登録
-      a.social-join__btn.social-join__btn--google(href="/googlelogin")
+      a.social-join__btn.social-join__btn--github(href="/auth/github")
+        i.fab.fa-github.social-join__btn-icon
+        span.social-join__desc.social-join__desc--github GitHubで登録
+      a.social-join__btn.social-join__btn--line(href="/auth/line")
+        i.fab.fa-line.social-join__btn-icon
+        span.social-join__desc.social-join__desc--line Lineで登録
+      a.social-join__btn.social-join__btn--google(href="/auth/google")
         img.social-join__btn-icon(src="/static/images/logo-icon-google.svg")
         span.social-join__desc.social-join__desc--google Googleで登録
       .social-join__footer 
-        p Facebook、Twitter、Googleアカウントを使い#{siteName}にログインできます。
-        p ログイン以外の目的に使われることはありません。
-        p #{siteName}利用規約をお読みになり同意の上、登録へお進みください。
+        span GitHub、Line、Googleアカウントを使い#{siteName}にログインできます。
+        span ログイン以外の目的に使われることはありません。
     .join__email.email-join
       .email-join__header 
         span メールアドレスで新規登録
@@ -44,7 +43,6 @@ block content
         input.email-join__input.email-join__email(type="text", name="name", placeholder="アカウント名", required=true)
         input.email-join__input.email-join__password(type="password", name="password", placeholder="パスワード", required=true, minlength=8)
         input.email-join__input.email-join__password-confirm(type="password", name="passwordConfirm", placeholder="パスワード（確認）", required=true, minlength=8)
-        p.email-join__read ご登録前に#{siteName}利用規約をお読みください。
         .email-join__agree
           input.email-join__agree#email-join__agree(type="checkbox", name="agree", required=true)
           label(for="email-join__agree") #{siteName}利用規約に同意する
