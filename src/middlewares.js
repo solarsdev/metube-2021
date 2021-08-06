@@ -47,25 +47,11 @@ export const csrfMiddleware = (err, req, res, next) => {
 
 export const localMiddleware = async (req, res, next) => {
   res.locals.siteName = 'MeTube';
+  res.locals.storageUrl = process.env.STORAGE_URL;
 
   const user = await getUserFromToken(req, res);
   res.locals.loggedIn = Boolean(user);
   res.locals.user = user || {};
-
-  if (res.locals.loggedIn) {
-    const {
-      avatar: { avatarType, avatarUrl },
-    } = user;
-
-    if (avatarType === 'external') {
-      res.locals.avatarPath = avatarUrl;
-    } else if (avatarType === 'internal') {
-      res.locals.avatarPath = `${process.env.STORAGE_URL}/${avatarUrl}`;
-    } else {
-      res.locals.avatarPath = '/static/images/basic_profile.png';
-    }
-  }
-
   return next();
 };
 

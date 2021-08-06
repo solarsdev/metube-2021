@@ -153,7 +153,6 @@ export const getGoogleLoginCallback = (req, res) => {
         email,
         name,
         avatar: {
-          avatarType: 'external',
           avatarUrl,
         },
         googleId,
@@ -214,7 +213,6 @@ export const getLineLoginCallback = (req, res) => {
         email,
         name,
         avatar: {
-          avatarType: 'external',
           avatarUrl,
         },
         lineId,
@@ -263,7 +261,6 @@ export const getGithubLoginCallback = (req, res) => {
         email,
         name,
         avatar: {
-          avatarType: 'external',
           avatarUrl,
         },
         githubId,
@@ -340,19 +337,17 @@ export const putAvatar = async (req, res) => {
   try {
     const { file } = req;
     const user = res.locals.user;
-    const avatarUrl = file ? file.key : null;
+    const avatarKey = file ? file.key : null;
 
-    if (avatarUrl) {
+    if (avatarKey) {
       await Promise.all([
         User.findByIdAndUpdate(user._id, {
           avatar: {
-            avatarType: 'internal',
-            avatarUrl,
+            avatarKey,
+            avatarUrl: `${res.locals.storageUrl}/${avatarKey}`,
           },
         }),
-        avatarUrl && user.avatar.avatarType === 'internal'
-          ? deleteStorageFile(user.avatar.avatarUrl)
-          : Promise.resolve(),
+        user.avatar.avatarKey ? deleteStorageFile(user.avatar.avatarKey) : Promise.resolve(),
       ]);
     }
 
@@ -368,14 +363,9 @@ export const deleteAvatar = async (req, res) => {
     const user = res.locals.user;
     await Promise.all([
       User.findByIdAndUpdate(user._id, {
-        avatar: {
-          avatarType: 'none',
-          avatarUrl: null,
-        },
+        $unset: { avatar: true },
       }),
-      user.avatar.avatarType === 'internal'
-        ? deleteStorageFile(user.avatar.avatarUrl)
-        : Promise.resolve(),
+      user.avatar.avatarKey ? deleteStorageFile(user.avatar.avatarKey) : Promise.resolve(),
     ]);
     return res.redirect('/users/edit');
   } catch (error) {

@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   password: { type: String },
   avatar: {
-    avatarType: { type: String, required: true, default: 'none' },
-    avatarUrl: { type: String, default: null },
+    avatarKey: { type: String },
+    avatarUrl: { type: String },
   },
   videos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
   googleId: { type: String, unique: true },

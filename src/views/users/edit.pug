@@ -6,7 +6,7 @@ block content
   .account
     .account__header
       form.account__form--avatar(action=`avatar/put?_csrf=${csrfToken}`, method="post", enctype="multipart/form-data")
-        img.account__user-avatar(src=avatarPath, alt="avatar")
+        img.account__user-avatar(src=`${user.avatar.avatarUrl ? user.avatar.avatarUrl : '/static/images/basic_profile.png'}`, alt="avatar")
         label.account__label--avatar(for="avatar")
           i.fa.fa-camera
         input.account__input--avatar(type="file", name="avatar", id="avatar", accept="image/*", onchange="form.submit()")
