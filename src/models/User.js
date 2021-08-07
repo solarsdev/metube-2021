@@ -11,6 +11,12 @@ const userSchema = new mongoose.Schema({
     avatarUrl: { type: String },
   },
   videos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
+  socialIds: [
+    {
+      site: { type: String, required: true, unique: true },
+      sub: { type: String, required: true },
+    },
+  ],
   googleId: { type: String, unique: true },
   lineId: { type: String, unique: true },
   githubId: { type: String, unique: true },

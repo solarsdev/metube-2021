@@ -22,24 +22,22 @@ passport.use(
       const user = await User.findOne({ email });
 
       if (!user) {
-        return done(null, false, { message: 'Email/Password is wrong' });
+        return done(new Error('メールアドレスまたはパスワードが違います。'));
       }
 
       if (!user.password) {
-        return done(null, false, {
-          message: 'Social login user, you can set password after social login',
-        });
+        return done(new Error('このメールアドレスはソーシャルログインを利用しています。'));
       }
 
       const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (!passwordMatch) {
-        return done(null, false, { message: 'Email/Password is wrong' });
+        return done(new Error('メールアドレスまたはパスワードが違います。'));
       }
 
       return done(null, user);
     } catch (error) {
-      return done(error);
+      return done(error._stack);
     }
   }),
 );
@@ -59,7 +57,7 @@ passport.use(
       }
       return done(null, user);
     } catch (error) {
-      return done(error);
+      return done(error._stack);
     }
   }),
 );
@@ -76,7 +74,7 @@ passport.use(
       try {
         return done(null, profile._json);
       } catch (error) {
-        return done(error);
+        return done(error._stack);
       }
     },
   ),

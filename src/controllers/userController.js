@@ -29,57 +29,42 @@ export const getJoin = (req, res) =>
 
 export const postJoin = async (req, res) => {
   try {
-    const { email, name, password, passwordConfirm, agree } = req.body;
-    if (!name) {
-      return res.status(400).render('join', {
-        pageTitle: 'Join',
-        errorMessage: 'Please enter your name',
-        csrfToken: req.csrfToken(),
-      });
+    const { body: { email, name, password, passwordConfirm, agree } = {} } = req;
+
+    if (!email || !name || !password) {
+      req.flash('error', '必須項目を入れてください。');
+      return res.redirect('/join');
     }
 
     if (password !== passwordConfirm) {
-      return res.status(400).render('join', {
-        pageTitle: 'Join',
-        errorMessage: 'Password confirmation does not match',
-        csrfToken: req.csrfToken(),
-      });
+      req.flash('error', 'パスワードが一致しません。');
+      return res.redirect('/join');
     }
 
     if (agree !== 'on') {
-      return res.status(400).render('join', {
-        pageTitle: 'Join',
-        errorMessage: 'Please check agreement',
-        csrfToken: req.csrfToken(),
-      });
+      req.flash('error', '利用規約に同意してください。');
+      return res.redirect('/join');
     }
 
     let user = await User.exists({ email });
 
     if (user) {
-      return res.status(400).render('join', {
-        pageTitle: 'Join',
-        errorMessage: 'Email is already taken',
-        csrfToken: req.csrfToken(),
-      });
+      req.flash('error', 'このメールアドレスは既に使われています。');
+      return res.redirect('/join');
     }
 
     user = await User.create({
       email,
       name,
       password,
-      socialOnly: false,
     });
 
     createLoginCookie(user, res);
     return res.redirect('/');
   } catch (error) {
     console.log(error);
-    return res.status(400).render('join', {
-      pageTitle: 'Join',
-      errorMessage: error._message,
-      csrfToken: req.csrfToken(),
-    });
+    req.flash('error', 'サーバーにエラーが発生しました。管理者にお問合せください。');
+    return res.redirect('/join');
   }
 };
 
@@ -90,19 +75,8 @@ export const postLogin = (req, res) => {
   try {
     passport.authenticate('local', (error, user, info) => {
       if (error) {
-        return res.status(401).render('login', {
-          pageTitle: 'Login',
-          errorMessage: error,
-          csrfToken: req.csrfToken(),
-        });
-      }
-
-      if (!user) {
-        return res.status(401).render('login', {
-          pageTitle: 'Login',
-          errorMessage: info.message,
-          csrfToken: req.csrfToken(),
-        });
+        req.flash('error', error);
+        return res.redirect('/login');
       }
 
       createLoginCookie(user, res);
@@ -110,169 +84,89 @@ export const postLogin = (req, res) => {
     })(req, res);
   } catch (error) {
     console.log(error);
-    return res.status(401).render('login', {
-      pageTitle: 'Login',
-      errorMessage: error.message,
-      csrfToken: req.csrfToken(),
-    });
+    req.flash('error', 'サーバーにエラーが発生しました。管理者にお問合せください。');
+    return res.redirect('/login');
   }
 };
 
 export const getGoogleLogin = passport.authenticate('google', { scope: ['email', 'profile'] });
-
-export const getGoogleLoginCallback = (req, res) => {
-  try {
-    passport.authenticate('google', async (error, profile) => {
-      if (error) {
-        return res.status(401).render('login', {
-          pageTitle: 'Login',
-          errorMessage: error,
-          csrfToken: req.csrfToken(),
-        });
-      }
-
-      const { email, name, picture: avatarUrl, sub: googleId } = profile;
-      let user = await User.findOne({ googleId }).select('_id');
-
-      if (user) {
-        createLoginCookie(user, res);
-        return res.redirect('/');
-      }
-
-      user = await User.findOne({ email });
-      // 이메일은 있는데 구글연동이 안되어있음 (자동연동)
-      if (user) {
-        user.googleId = googleId;
-        await user.save();
-        createLoginCookie(user, res);
-        return res.redirect('/');
-      }
-
-      // 구글연동도 안되어 있고 이메일도 없음 (신규)
-      user = await User.create({
-        email,
-        name,
-        avatar: {
-          avatarUrl,
-        },
-        googleId,
-      });
-
-      createLoginCookie(user, res);
-      return res.redirect('/');
-    })(req, res);
-  } catch (error) {
-    console.log(error);
-    return res.redirect('/');
-  }
-};
-
 export const getLineLogin = passport.authenticate('line', {
   scope: ['profile', 'openid', 'email'],
 });
+export const getGithubLogin = passport.authenticate('github');
 
-export const getLineLoginCallback = (req, res) => {
+const socialLoginCallback = async (error, site, profile, res) => {
+  if (error) {
+    req.flash('error', error);
+    return res.redirect('/login');
+  }
+
   try {
-    passport.authenticate('line', async (error, profile) => {
-      if (error) {
-        return res.status(401).render('login', {
-          pageTitle: 'Login',
-          errorMessage: error,
-          csrfToken: req.csrfToken(),
-        });
-      }
+    let email, name, avatarUrl, sub;
 
-      // line needs to be check profile.email (if user dont permit to send, maybe null)
-      if (!profile.hasOwnProperty('email')) {
-        return res.status(401).render('login', {
-          pageTitle: 'Login',
-          errorMessage: 'Please permit to send email from line',
-          csrfToken: req.csrfToken(),
-        });
-      }
+    if (site === 'google') {
+      ({ email, name, picture: avatarUrl, sub } = profile);
+    } else if (site === 'line') {
+      ({ email, name, picture: avatarUrl, sub } = profile);
+    } else if (site === 'github') {
+      ({ email, login: name, avatar_url: avatarUrl, id: sub } = profile);
+    }
 
-      const { email, name, picture: avatarUrl, sub: lineId } = profile;
-      let user = await User.findOne({ lineId });
+    let user = await User.findOne({ socialIds: { $elemMatch: { site, sub } } }, '_id');
 
-      if (user) {
-        createLoginCookie(user, res);
-        return res.redirect('/');
-      }
-
-      user = await User.findOne({ email });
-      // 이메일은 있는데 라인연동이 안되어있음 (자동연동)
-      if (user) {
-        user.lineId = lineId;
-        await user.save();
-        createLoginCookie(user, res);
-        return res.redirect('/');
-      }
-
-      // 라인연동도 안되어 있고 이메일도 없음 (신규)
-      user = await User.create({
-        email,
-        name,
-        avatar: {
-          avatarUrl,
-        },
-        lineId,
-      });
-
+    if (user) {
       createLoginCookie(user, res);
       return res.redirect('/');
-    })(req, res);
+    }
+
+    user = await User.findOne({ email });
+
+    if (user) {
+      user.socialIds.push({ site, sub });
+      await user.save();
+      createLoginCookie(user, res);
+      return res.redirect('/');
+    }
+
+    user = await User.create({
+      email,
+      name,
+      avatar: {
+        avatarUrl,
+      },
+      socialIds: [
+        {
+          site,
+          sub,
+        },
+      ],
+    });
+
+    createLoginCookie(user, res);
+    return res.redirect('/');
   } catch (error) {
     console.log(error);
-    return res.redirect('/');
+    req.flash('error', 'サーバーにエラーが発生しました。管理者にお問合せください。');
+    return res.redirect('/login');
   }
 };
 
-export const getGithubLogin = passport.authenticate('github');
+export const getGoogleLoginCallback = (req, res) => {
+  passport.authenticate('google', (error, profile) => {
+    socialLoginCallback(error, 'google', profile, res);
+  })(req, res);
+};
+
+export const getLineLoginCallback = (req, res) => {
+  passport.authenticate('line', async (error, profile) => {
+    socialLoginCallback(error, 'line', profile, res);
+  })(req, res);
+};
 
 export const getGithubLoginCallback = (req, res) => {
-  try {
-    passport.authenticate('github', async (error, profile) => {
-      if (error) {
-        return res.status(401).render('login', {
-          pageTitle: 'Login',
-          errorMessage: error,
-        });
-      }
-
-      const { email, login: name, avatar_url: avatarUrl, id: githubId } = profile;
-      let user = await User.findOne({ githubId });
-
-      if (user) {
-        createLoginCookie(user, res);
-        return res.redirect('/');
-      }
-
-      user = await User.findOne({ email });
-      // 이메일은 있는데 깃허브연동이 안되어있음 (자동연동)
-      if (user) {
-        user.githubId = githubId;
-        await user.save();
-        createLoginCookie(user, res);
-        return res.redirect('/');
-      }
-
-      // 깃허브연동도 안되어 있고 이메일도 없음 (신규)
-      user = await User.create({
-        email,
-        name,
-        avatar: {
-          avatarUrl,
-        },
-        githubId,
-      });
-
-      createLoginCookie(user, res);
-      return res.redirect('/');
-    })(req, res);
-  } catch (error) {
-    console.log(error);
-    return res.redirect('/');
-  }
+  passport.authenticate('github', async (error, profile) => {
+    socialLoginCallback(error, 'github', profile, res);
+  })(req, res);
 };
 
 export const logout = (req, res) => {
@@ -285,15 +179,20 @@ export const getEdit = (req, res) =>
 
 export const postEdit = async (req, res) => {
   try {
-    const {
-      body: { name },
-    } = req;
+    const { body: { name } = {} } = req;
+
+    if (!name) {
+      req.flash('error', '必須項目を入れてください。');
+      return res.redirect('/join');
+    }
+
     const user = res.locals.user;
     await User.findByIdAndUpdate(user._id, { name });
     return res.redirect('/users/edit');
   } catch (error) {
     console.log(error);
-    return res.redirect('/');
+    req.flash('error', 'サーバーにエラーが発生しました。管理者にお問合せください。');
+    return res.redirect('/users/edit');
   }
 };
 
@@ -302,9 +201,7 @@ export const getChangePassword = (req, res) =>
 
 export const postChangePassword = async (req, res) => {
   try {
-    const {
-      body: { oldPassword, newPassword, newPassword2 },
-    } = req;
+    const { body: { oldPassword, newPassword, newPassword2 } = {} } = req;
     const user = res.locals.user;
     const isValidPassword = await bcrypt.compare(oldPassword, user.password);
 

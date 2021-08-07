@@ -16,8 +16,8 @@ const s3 = isProductionEnv
     });
 const storage = (folderName) => {
   return multerS3({
-    s3: s3,
-    bucket: 'metube-2021.service.s3',
+    s3,
+    bucket: process.env.BUCKET_NAME,
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: (req, file, cb) => {
       cb(null, `${folderName}/${crypto.randomBytes(16).toString('hex')}`);
@@ -103,7 +103,7 @@ export const avatarUploader = multer({
 export const videoUploader = multer({
   storage: storage('videos'),
   limits: {
-    fileSize: 1 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
     if (
@@ -124,7 +124,7 @@ export const deleteStorageFile = (Key) => {
   return new Promise((resolve, reject) => {
     s3.deleteObject(
       {
-        Bucket: 'metube-2021.service.s3',
+        Bucket: process.env.BUCKET_NAME,
         Key,
       },
       (error, data) => {
@@ -142,7 +142,7 @@ export const deleteStorageFiles = (Objects) => {
   return new Promise((resolve, reject) => {
     s3.deleteObjects(
       {
-        Bucket: 'metube-2021.service.s3',
+        Bucket: process.env.BUCKET_NAME,
         Delete: {
           Objects,
           Quiet: true,
