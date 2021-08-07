@@ -3,6 +3,6 @@ import { postTranscodeUpdate } from '../controllers/videoController';
 
 const apiRouter = express.Router();
 
-apiRouter.post('/tanscode/update/:jobId', postTranscodeUpdate);
+apiRouter.post('/transcode/update', postTranscodeUpdate);
 
 export default apiRouter;

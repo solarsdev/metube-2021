@@ -6,6 +6,7 @@ module.exports = {
   entry: {
     index: './src/client/js/index.js',
     videoPlayer: './src/client/js/videoPlayer.js',
+    videoUploader: './src/client/js/videoUploader.js',
   },
   plugins: [
     new CopyWebpackPlugin({

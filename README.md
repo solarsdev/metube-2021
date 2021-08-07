@@ -92,15 +92,15 @@ $ docker container run -p <hostPort>:4000 -d <accountName>/<imageName>
 
 ##### グローバル
 
-- [ ] / &ensp;：&ensp; ホームページ
-- [ ] /join &ensp;：&ensp; 会員登録
-- [ ] /login &ensp;：&ensp; ログイン
+- [x] / &ensp;：&ensp; ホームページ
+- [x] /join &ensp;：&ensp; 会員登録
+- [x] /login &ensp;：&ensp; ログイン
+- [x] /logout &ensp;：&ensp; ログアウト
 - [ ] /search &ensp;：&ensp; 検索
 
 ##### ユーザー
 
 - [ ] /users/:id &ensp;：&ensp; ユーザーのプロフィール
-- [ ] /users/logout &ensp;：&ensp; ログアウト
 - [ ] /users/edit &ensp;：&ensp; 自分のアカウント情報を編集
 - [ ] /users/delete &ensp;：&ensp; 自分のアカウント削除
 

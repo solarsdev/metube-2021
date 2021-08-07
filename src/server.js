@@ -1,6 +1,6 @@
 import cookieParser from 'cookie-parser';
-import csurf from 'csurf';
 import express from 'express';
+import flash from 'express-flash';
 import session from 'express-session';
 import morgan from 'morgan';
 import passport from 'passport';
@@ -22,18 +22,19 @@ app.disable('etag');
 
 app.use(morgan('dev'));
 app.use(session({ secret: process.env.SESSION_KEY, resave: false, saveUninitialized: false }));
+app.use(flash());
 app.use(passport.initialize());
-app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(csrfMiddleware);
 app.use(setHeaderMiddleware);
 app.use(localMiddleware);
 app.use('/static', express.static(isProductionEnv ? `${__dirname}/assets` : 'dist/assets'));
-app.use('/', rootRouter);
 app.use('/api', apiRouter);
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/videos', videoRouter);
+app.use('/', rootRouter);
 
 export default app;

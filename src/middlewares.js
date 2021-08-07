@@ -1,6 +1,6 @@
 import aws from 'aws-sdk';
 import crypto from 'crypto';
-import multer from 'multer';
+import multer, { MulterError } from 'multer';
 import multerS3 from 'multer-s3';
 import passport from 'passport';
 
@@ -86,12 +86,37 @@ export const avatarUploader = multer({
   limits: {
     fileSize: 1 * 1024 * 1024,
   },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/jpeg'
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+    }
+  },
 });
 
 export const videoUploader = multer({
   storage: storage('videos'),
   limits: {
-    fileSize: 10 * 1024 * 1024,
+    fileSize: 1 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype == 'video/mp4' ||
+      file.mimetype == 'video/mpeg' ||
+      file.mimetype == 'video/ogg' ||
+      file.mimetype == 'video/quicktime' ||
+      file.mimetype == 'video/webm'
+    ) {
+      cb(null, true);
+    } else {
+      cb(new MulterError('LIMIT_UNEXPECTED_FILE'), false);
+    }
   },
 });
 
@@ -101,6 +126,27 @@ export const deleteStorageFile = (Key) => {
       {
         Bucket: 'metube-2021.service.s3',
         Key,
+      },
+      (error, data) => {
+        if (error) {
+          return reject(error);
+        } else {
+          return resolve(data);
+        }
+      },
+    );
+  });
+};
+
+export const deleteStorageFiles = (Objects) => {
+  return new Promise((resolve, reject) => {
+    s3.deleteObjects(
+      {
+        Bucket: 'metube-2021.service.s3',
+        Delete: {
+          Objects,
+          Quiet: true,
+        },
       },
       (error, data) => {
         if (error) {

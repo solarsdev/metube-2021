@@ -2,7 +2,7 @@ extends ../base.pug
 
 block content
   div#videoContainer
-    video(src=`${storageUrl}/${video.fileInfo.videoKey}`, poster=`${storageUrl}/${video.fileInfo.videoKey}-00001.png`, width="640", hieght="360") 
+    video.watch__video(src=`${storageUrl}/${video.fileInfo.videoKey}`, poster=`${storageUrl}/${video.fileInfo.videoKey}-00001.png`, playsinline) 
     div
       button#play Play
       button#mute Mute
