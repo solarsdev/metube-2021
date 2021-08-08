@@ -19,7 +19,7 @@ block content
         input(type="text", name="name", placeholder="Name", value=user.name, required=true)
         input(type="submit", value="Save")
   hr
-  if avatarPath
+  if user.avatar.avatarUrl
     a(href="avatar/delete") Delete avatar &rarr;
     br
   a(href="change-password") Change password &rarr; 

@@ -17,9 +17,6 @@ const userSchema = new mongoose.Schema({
       sub: { type: String, required: true },
     },
   ],
-  googleId: { type: String, unique: true },
-  lineId: { type: String, unique: true },
-  githubId: { type: String, unique: true },
 });
 
 userSchema.pre('save', async function () {

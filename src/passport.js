@@ -72,7 +72,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        return done(null, profile._json);
+        return done(null, 'google', profile._json);
       } catch (error) {
         return done(error._stack);
       }
@@ -94,7 +94,7 @@ passport.use(
     async (accessToken, refreshToken, params, _, done) => {
       try {
         const profile = jwt.decode(params.id_token);
-        return done(null, profile);
+        return done(null, 'line', profile);
       } catch (error) {
         return done(error);
       }
@@ -112,7 +112,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        return done(null, profile._json);
+        return done(null, 'github', profile._json);
       } catch (error) {
         return done(error);
       }

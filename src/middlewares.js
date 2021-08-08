@@ -24,17 +24,6 @@ const storage = (folderName) => {
     },
   });
 };
-const getUserFromToken = (req, res) => {
-  return new Promise((resolve, reject) => {
-    passport.authenticate('jwt', { session: false }, (error, user, info) => {
-      if (error || !user) {
-        return resolve(null);
-      }
-
-      return resolve(user);
-    })(req, res);
-  });
-};
 
 export const csrfMiddleware = (err, req, res, next) => {
   if (err.code !== 'EBADCSRFTOKEN') {
@@ -45,13 +34,43 @@ export const csrfMiddleware = (err, req, res, next) => {
   res.send('Not Authorized. csrf error.');
 };
 
+/**
+ * 토큰으로부터 유저 아이디를 분석하고, 유저를 반환하는 함수.
+ * 토큰 페이로드로부터 아이디를 DB에서 검색한다.
+ *
+ * @param {Express.Request} req Express의 Request 객체
+ * @param {Express.Response} res Express의 Response 객체
+ * @returns 실패했을 경우에는 에러 (User not found), 성공했을 경우에는 유저 객체
+ */
+const getUserFromToken = (req, res) => {
+  return new Promise((resolve, reject) => {
+    passport.authenticate('jwt', { session: false }, (error, user, info) => {
+      if (error) {
+        return reject(error);
+      }
+
+      if (!user) {
+        return reject(new Error('User not found'));
+      }
+
+      return resolve(user);
+    })(req, res);
+  });
+};
+
 export const localMiddleware = async (req, res, next) => {
   res.locals.siteName = 'MeTube';
   res.locals.storageUrl = process.env.STORAGE_URL;
 
-  const user = await getUserFromToken(req, res);
-  res.locals.loggedIn = Boolean(user);
-  res.locals.user = user || {};
+  try {
+    const user = await getUserFromToken(req, res);
+    res.locals.loggedIn = true;
+    res.locals.user = user;
+  } catch (error) {
+    res.locals.loggedIn = false;
+    res.locals.user = {};
+  }
+
   return next();
 };
 

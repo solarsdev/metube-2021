@@ -4,6 +4,12 @@ import passport from 'passport';
 import { deleteStorageFile } from '../middlewares';
 import User from '../models/User';
 
+/**
+ * 전달된 유저 객체를 이용해서 로그인 토큰을 만들고, 쿠키에 저장한다.
+ *
+ * @param {any} user 로그인 토큰을 만들 유저
+ * @param {Express.Response} res Express의 Response 객체
+ */
 const createLoginCookie = (user, res) => {
   const token = jwt.sign(
     {
@@ -95,6 +101,17 @@ export const getLineLogin = passport.authenticate('line', {
 });
 export const getGithubLogin = passport.authenticate('github');
 
+/**
+ * 소셜 사이트에 로그인된 사용자의 결과값을 받아온다.
+ * 결과값을 받아온 뒤에는 DB에 저장한다.
+ * DB 저장에 성공하면 뷰를 홈페이지로 이동시킨다.
+ *
+ * @param {string} error 소셜 사이트에서 요청 뒤 받아오는 에러값
+ * @param {string} site 소셜 사이트명 ( google, line, github 등 )
+ * @param {any} profile 각 소셜 사이트에서 받아오는 프로필 결과값
+ * @param {Express.Response} res Express의 Response 객체
+ * @returns 에러 발생시에는 다시 로그인페이지, 로그인 성공시에는 홈페이지로 이동
+ */
 const socialLoginCallback = async (error, site, profile, res) => {
   if (error) {
     req.flash('error', error);
@@ -152,21 +169,21 @@ const socialLoginCallback = async (error, site, profile, res) => {
 };
 
 export const getGoogleLoginCallback = (req, res) => {
-  passport.authenticate('google', (error, profile) => {
-    socialLoginCallback(error, 'google', profile, res);
-  })(req, res);
+  passport.authenticate('google', (error, site, profile) =>
+    socialLoginCallback(error, site, profile, res),
+  )(req, res);
 };
 
 export const getLineLoginCallback = (req, res) => {
-  passport.authenticate('line', async (error, profile) => {
-    socialLoginCallback(error, 'line', profile, res);
-  })(req, res);
+  passport.authenticate('line', (error, site, profile) =>
+    socialLoginCallback(error, site, profile, res),
+  )(req, res);
 };
 
 export const getGithubLoginCallback = (req, res) => {
-  passport.authenticate('github', async (error, profile) => {
-    socialLoginCallback(error, 'github', profile, res);
-  })(req, res);
+  passport.authenticate('github', (error, site, profile) =>
+    socialLoginCallback(error, site, profile, res),
+  )(req, res);
 };
 
 export const logout = (req, res) => {
@@ -201,31 +218,29 @@ export const getChangePassword = (req, res) =>
 
 export const postChangePassword = async (req, res) => {
   try {
-    const { body: { oldPassword, newPassword, newPassword2 } = {} } = req;
+    const { body: { oldPassword, newPassword, newPasswordConfirm } = {} } = req;
     const user = res.locals.user;
-    const isValidPassword = await bcrypt.compare(oldPassword, user.password);
 
-    if (!isValidPassword) {
-      return res.status(400).render('users/change-password', {
-        pageTitle: 'Change password',
-        errorMessage: 'Current password is invalid',
-        csrfToken: req.csrfToken(),
-      });
+    if (user.password) {
+      const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+
+      if (!isValidPassword) {
+        req.flash('error', '旧パスワードが正しくありません。');
+        return res.redirect('/users/edit');
+      }
     }
 
-    if (newPassword !== newPassword2) {
-      return res.status(400).render('users/change-password', {
-        pageTitle: 'Change password',
-        errorMessage: 'New password confirmation does not match',
-        csrfToken: req.csrfToken(),
-      });
+    if (newPassword !== newPasswordConfirm) {
+      req.flash('error', 'パスワードが一致しません。');
+      return res.redirect('/users/edit');
     }
 
     user.password = newPassword;
     await user.save();
-    return res.redirect('/logout');
+    return res.redirect('/users/edit');
   } catch (error) {
     console.log(error);
+    req.flash('error', 'サーバーにエラーが発生しました。管理者にお問合せください。');
     return res.redirect('/');
   }
 };
