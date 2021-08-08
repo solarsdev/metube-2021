@@ -185,7 +185,7 @@ export const deleteVideo = async (req, res) => {
 };
 
 export const getUpload = (req, res) =>
-  res.render('videos/upload', { pageTitle: 'Upload Video', csrfToken: req.csrfToken() });
+  res.render('videos/upload', { pageTitle: '動画作成', csrfToken: req.csrfToken() });
 
 export const postUpload = (req, res) => {
   videoUploader.single('video')(req, res, async (error) => {

@@ -39,24 +39,42 @@
     }
 
     input[type='file'] + label {
+      height: 40px;
+      position: relative;
+      padding: 0px 12px;
+      margin-bottom: 8px;
+
       display: flex;
-      justify-content: center;
       align-items: center;
 
-      padding: 12px;
-      margin-bottom: 16px;
-      background-color: rgb(88, 86, 214);
-      border-radius: 6px;
-      color: white;
-      cursor: pointer;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
 
-      &:focus {
-        outline: 1px dotted #000;
-        outline: -webkit-focus-ring-color auto 5px;
+      color: rgba(0, 0, 0, 0.4);
+
+      .hide {
+        display: none;
+      }
+
+      #video-upload__filesize {
+        position: absolute;
+        right: 40px;
+
+        &::before {
+          content: '(';
+        }
+        &::after {
+          content: 'MB)';
+        }
+      }
+
+      span {
+        font-size: 14px;
       }
 
       i {
-        margin-right: 5px;
+        position: absolute;
+        right: 12px;
       }
     }
 
@@ -75,5 +93,12 @@
         background-color: #0069d8;
       }
     }
+  }
+
+  &__warning {
+    margin-left: 12px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: rgba(255, 0, 0, 0.5);
   }
 }

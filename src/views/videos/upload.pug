@@ -7,8 +7,10 @@ block content
     form.video-upload__form(action=`?_csrf=${csrfToken}`, method="post", enctype="multipart/form-data")
       input(type="file", name="video", id="video", accept="video/*", required)
       label(for="video")
-        i.fas.fa-upload
-        span ファイルを選択
+        span#video-upload__filename ファイルを選択
+        span#video-upload__filesize.hide 0
+        i.fas.fa-link
+      span.video-upload__warning ※ファイルは最大10MBまで登録可能です。
       input(type="text", name="title", placeholder="タイトル（必須）", maxlength=80, required)
       input(type="text", name="description", placeholder="説明", minlength=10)
       input(type="text", name="hashtags", placeholder="タグ")
