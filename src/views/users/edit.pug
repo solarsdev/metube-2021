@@ -3,21 +3,23 @@ extends ../base.pug
 block content
   if errorMessage
     p=errorMessage
-  .account
+  .page-container.account
     .account__header
-      form.account__form--avatar(action=`avatar/put?_csrf=${csrfToken}`, method="post", enctype="multipart/form-data")
-        img.account__user-avatar(src=`${user.avatar.avatarUrl ? user.avatar.avatarUrl : '/static/images/basic_profile.png'}`, alt="avatar")
-        label.account__label--avatar(for="avatar")
-          i.fa.fa-camera
-        input.account__input--avatar(type="file", name="avatar", id="avatar", accept="image/*", onchange="form.submit()")
-      h1.account__heading.account__welcome-msg ようこそ、#{user.name}さん
+      form.account__avatar-form.avatar-form(action=`avatar/put?_csrf=${csrfToken}`, method="post", enctype="multipart/form-data")
+        img.avatar-form__current-avatar(src=`${user.avatar.avatarUrl ? user.avatar.avatarUrl : '/static/images/basic_profile.png'}`, alt="avatar")
+        label.avatar-form__input-label(for="avatar")
+          i.fa.fa-camera.avatar-for__input-icon
+        input.avatar-form__input(type="file", name="avatar", id="avatar", accept="image/*", onchange="form.submit()")
+      h1.account__welcome-msg ようこそ、#{user.name}さん
     .account__main
       h1.account__heading 基本情報
-      p.account__info 一部の情報は、MeTubeサービスを利用する他のユーザーに表示される場合があります。
-      form.account__form(method="post")
+      p.account__notice 一部の情報は、MeTubeサービスを利用する他のユーザーに表示される場合があります。
+      form.account__basic-info-form.basic-info-form(method="post")
         input(type="hidden", name="_csrf", value=csrfToken)
-        input(type="text", name="name", placeholder="Name", value=user.name, required=true)
-        input(type="submit", value="Save")
+        .basic-info-form__label-group
+          span.basic-info-form__label.basic-info-form__label_required アカウント名
+          input.basic-info-form__input.input(type="text", name="name", placeholder="アカウント名", value=user.name, required=true)
+        input.basic-info-form__submit.submit(type="submit", value="保存")
   hr
   if user.avatar.avatarUrl
     a(href="avatar/delete") Delete avatar &rarr;

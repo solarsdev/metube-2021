@@ -1,77 +1,109 @@
 .account {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  &__heading {
-    font-size: 24px;
-  }
-
-  &__heading {
-    font-size: 24px;
-  }
-
-  &__info {
-    font-size: 16px;
-    color: rgba(#000000, 0.5);
-  }
+  padding: 32px;
 
   &__header {
-    padding-top: 32px;
+    margin-bottom: 32px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
 
-  &__user-avatar {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
+  .avatar-form {
+    position: relative;
+
+    &__current-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    &__input-label {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      color: white;
+      border-radius: 50%;
+
+      &:hover {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+      }
+    }
+
+    &__input-icon {
+      font-size: 24px;
+    }
+
+    &__input {
+      display: none;
+    }
   }
 
   &__welcome-msg {
     margin-top: 16px;
+    font-size: 24px;
   }
 
   &__main {
-    margin-top: 32px;
-    padding: 20px;
+    padding: 24px;
     border: 1px solid #eaeaea;
     border-radius: 4px;
+    background-color: white;
   }
 
-  &__form--avatar {
-    position: relative;
+  &__heading {
+    font-size: 24px;
+    margin-bottom: 16px;
   }
 
-  &__input--avatar {
-    display: none;
+  &__notice {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: rgba(#000000, 0.5);
   }
 
-  &__label--avatar {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 97%;
-    opacity: 0;
-    color: white;
-    border-radius: 50%;
+  .basic-info-form {
+    padding: 16px;
 
-    &:hover {
-      opacity: 1;
-      background-color: rgba(#000000, 0.3);
-      cursor: pointer;
+    &__label-group {
+      display: grid;
+      align-items: center;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-auto-rows: 1fr;
+      gap: 4px;
     }
 
-    i {
-      font-size: 24px;
+    &__label {
+      &::before {
+        content: '※任意';
+        margin-right: 16px;
+        padding: 3px 6px;
+        font-size: 12px;
+        color: white;
+        background-color: grey;
+        border-radius: 4px;
+      }
+
+      &_required {
+        &::before {
+          content: '※必須';
+          background-color: red;
+        }
+      }
+    }
+
+    &__submit {
+      margin-top: 16px;
     }
   }
 }
