@@ -5,39 +5,81 @@
   align-items: center;
 }
 
-.input {
-  box-sizing: border-box;
-  width: 100%;
-  height: 40px;
-  max-width: 400px;
-  font-size: inherit;
-  text-indent: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  outline: none;
-  transition: border-color 0.15s ease-in-out;
+.form {
+  padding: 16px;
 
-  &:focus {
-    border-color: #5bc0de;
+  &__input-group {
+    display: grid;
+    grid-template-columns: minmax(1fr, max-content);
+    grid-auto-rows: minmax(1fr, max-content);
+    gap: 16px;
   }
 
-  &::placeholder {
-    color: rgba(0, 0, 0, 0.2);
+  &__label-group {
+    display: grid;
+    align-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 4px;
   }
-}
 
-.submit {
-  width: 100%;
-  height: 40px;
-  font-size: inherit;
-  border: none;
-  border-radius: 5px;
-  color: #ffffff;
-  background-color: #0275d8;
-  outline: none;
-  cursor: pointer;
+  &__label {
+    &::before {
+      content: '※任意';
+      margin-right: 16px;
+      padding: 3px 6px;
+      font-size: 12px;
+      color: white;
+      background-color: grey;
+      border-radius: 4px;
+    }
 
-  &:hover {
-    background-color: #0069d8;
+    &_required {
+      &::before {
+        content: '※必須';
+        background-color: red;
+      }
+    }
+  }
+
+  &__input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    max-width: 400px;
+    font-size: inherit;
+    text-indent: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.15s ease-in-out;
+
+    &:focus {
+      border-color: #5bc0de;
+    }
+
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__submit {
+    display: block;
+    margin: 0px auto;
+
+    width: 100%;
+    height: 40px;
+    max-width: 250px;
+    font-size: inherit;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    background-color: #0275d8;
+    outline: none;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #0069d8;
+    }
   }
 }

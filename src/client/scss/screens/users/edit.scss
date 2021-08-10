@@ -1,5 +1,9 @@
 .account {
   padding: 32px;
+  display: grid;
+  grid-template-columns: minmax(1fr, max-content);
+  grid-auto-rows: minmax(1fr, max-content);
+  gap: 32px;
 
   &__header {
     margin-bottom: 32px;
@@ -70,40 +74,5 @@
     font-size: 16px;
     margin-bottom: 16px;
     color: rgba(#000000, 0.5);
-  }
-
-  .basic-info-form {
-    padding: 16px;
-
-    &__label-group {
-      display: grid;
-      align-items: center;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      grid-auto-rows: 1fr;
-      gap: 4px;
-    }
-
-    &__label {
-      &::before {
-        content: '※任意';
-        margin-right: 16px;
-        padding: 3px 6px;
-        font-size: 12px;
-        color: white;
-        background-color: grey;
-        border-radius: 4px;
-      }
-
-      &_required {
-        &::before {
-          content: '※必須';
-          background-color: red;
-        }
-      }
-    }
-
-    &__submit {
-      margin-top: 16px;
-    }
   }
 }

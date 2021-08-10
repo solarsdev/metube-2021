@@ -14,14 +14,26 @@ block content
     .account__main
       h1.account__heading 基本情報
       p.account__notice 一部の情報は、MeTubeサービスを利用する他のユーザーに表示される場合があります。
-      form.account__basic-info-form.basic-info-form(method="post")
-        input(type="hidden", name="_csrf", value=csrfToken)
-        .basic-info-form__label-group
-          span.basic-info-form__label.basic-info-form__label_required アカウント名
-          input.basic-info-form__input.input(type="text", name="name", placeholder="アカウント名", value=user.name, required=true)
-        input.basic-info-form__submit.submit(type="submit", value="保存")
-  hr
-  if user.avatar.avatarUrl
-    a(href="avatar/delete") Delete avatar &rarr;
-    br
-  a(href="change-password") Change password &rarr; 
+      form.account__basic-info-form.form(method="post")
+        .form__input-group
+          input(type="hidden", name="_csrf", value=csrfToken)
+          .form__label-group
+            span.form__label.form__label_required アカウント名
+            input.form__input(type="text", name="name", placeholder="アカウント名", value=user.name, required=true)
+          input.form__submit(type="submit", value="保存")
+    .account__main
+      h1.account__heading セキュリティー
+      p.account__notice パスワードを変更できます。現在のパスワードと新しいパスワードを入力してください。
+      form.account__password-form.form(action="/users/change-password", method="post")
+        .form__input-group
+          input(type="hidden", name="_csrf", value=csrfToken)
+          .form__label-group
+            span.form__label 現在のパスワード
+            input.form__input(type="password", name="oldPassword")
+          .form__label-group
+            span.form__label.form__label_required 新しいパスワード
+            input.form__input(type="password", name="newPassword", required)
+          .form__label-group
+            span.form__label.form__label_required 新しいパスワード（確認）
+            input.form__input(type="password", name="newPasswordConfirm", required)
+          input.form__submit(type="submit", value="パスワード変更")

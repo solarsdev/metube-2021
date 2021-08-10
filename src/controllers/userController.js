@@ -213,9 +213,6 @@ export const postEdit = async (req, res) => {
   }
 };
 
-export const getChangePassword = (req, res) =>
-  res.render('users/change-password', { pageTitle: 'Change password', csrfToken: req.csrfToken() });
-
 export const postChangePassword = async (req, res) => {
   try {
     const { body: { oldPassword, newPassword, newPasswordConfirm } = {} } = req;
@@ -225,13 +222,13 @@ export const postChangePassword = async (req, res) => {
       const isValidPassword = await bcrypt.compare(oldPassword, user.password);
 
       if (!isValidPassword) {
-        req.flash('error', '旧パスワードが正しくありません。');
+        req.flash('error', '現在のパスワードが正しくありません。');
         return res.redirect('/users/edit');
       }
     }
 
     if (newPassword !== newPasswordConfirm) {
-      req.flash('error', 'パスワードが一致しません。');
+      req.flash('error', '新しいパスワードが一致しません。');
       return res.redirect('/users/edit');
     }
 
@@ -241,7 +238,7 @@ export const postChangePassword = async (req, res) => {
   } catch (error) {
     console.log(error);
     req.flash('error', 'サーバーにエラーが発生しました。管理者にお問合せください。');
-    return res.redirect('/');
+    return res.redirect('/users/edit');
   }
 };
 
