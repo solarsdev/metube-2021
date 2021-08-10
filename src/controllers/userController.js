@@ -109,10 +109,11 @@ export const getGithubLogin = passport.authenticate('github');
  * @param {string} error 소셜 사이트에서 요청 뒤 받아오는 에러값
  * @param {string} site 소셜 사이트명 ( google, line, github 등 )
  * @param {any} profile 각 소셜 사이트에서 받아오는 프로필 결과값
+ * @param {Express.Request} req Express의 Request 객체
  * @param {Express.Response} res Express의 Response 객체
  * @returns 에러 발생시에는 다시 로그인페이지, 로그인 성공시에는 홈페이지로 이동
  */
-const socialLoginCallback = async (error, site, profile, res) => {
+const socialLoginCallback = async (error, site, profile, req, res) => {
   if (error) {
     req.flash('error', error);
     return res.redirect('/login');
@@ -170,19 +171,19 @@ const socialLoginCallback = async (error, site, profile, res) => {
 
 export const getGoogleLoginCallback = (req, res) => {
   passport.authenticate('google', (error, site, profile) =>
-    socialLoginCallback(error, site, profile, res),
+    socialLoginCallback(error, site, profile, req, res),
   )(req, res);
 };
 
 export const getLineLoginCallback = (req, res) => {
   passport.authenticate('line', (error, site, profile) =>
-    socialLoginCallback(error, site, profile, res),
+    socialLoginCallback(error, site, profile, req, res),
   )(req, res);
 };
 
 export const getGithubLoginCallback = (req, res) => {
   passport.authenticate('github', (error, site, profile) =>
-    socialLoginCallback(error, site, profile, res),
+    socialLoginCallback(error, site, profile, req, res),
   )(req, res);
 };
 
