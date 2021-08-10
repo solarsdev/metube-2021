@@ -3,18 +3,30 @@ extends ../base.pug
 block content
   if messages.error
     span=messages.error
-  .video-upload
-    form.video-upload__form(action=`?_csrf=${csrfToken}`, method="post", enctype="multipart/form-data")
-      input(type="file", name="video", id="video", accept="video/*", required)
-      label(for="video")
-        span#video-upload__filename ファイルを選択
-        span#video-upload__filesize.hide 0
-        i.fas.fa-link
-      span.video-upload__warning ※ファイルは最大10MBまで登録可能です。
-      input(type="text", name="title", placeholder="タイトル（必須）", maxlength=80, required)
-      input(type="text", name="description", placeholder="説明", minlength=10)
-      input(type="text", name="hashtags", placeholder="タグ")
-      input(type="submit", value="保存")
+  .page-container.video-upload
+    .page-container__section
+      h1.page-container__heading 動画作成
+      p.page-container__notice 最大10MBまでの動画をアップロードできます。
+      form.video-upload__form.form(action=`?_csrf=${csrfToken}`, method="post", enctype="multipart/form-data")
+        .form__input-group
+          .form__label-group
+            label.form__label.form__label_required 動画ファイル
+            input(type="file", name="video", id="video", accept="video/*", required)
+            label(for="video")
+              span#video-upload__filename ファイルを選択
+              span#video-upload__filesize.hide 0
+              i.far.fa-folder-open
+          span.video-upload__warning ※ファイルは最大10MBまで登録可能です。
+          .form__label-group
+            label.form__label.form__label_required タイトル
+            input.form__input(type="text", name="title", maxlength=80, required)
+          .form__label-group
+            label.form__label 説明
+            input.form__input(type="text", name="description", minlength=10)
+          .form__label-group
+            label.form__label タグ
+            input.form__input(type="text", name="hashtags")
+          input.form__submit(type="submit", value="保存")
 
 block scripts
   script(src="/static/js/videoUploader.js") 

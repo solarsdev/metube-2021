@@ -1,8 +1,8 @@
 .account {
   padding: 32px;
   display: grid;
-  grid-template-columns: minmax(1fr, max-content);
-  grid-auto-rows: minmax(1fr, max-content);
+  grid-template-columns: minmax(250px, 600px);
+  grid-auto-rows: max-content;
   gap: 32px;
 
   &__header {
@@ -56,23 +56,5 @@
   &__welcome-msg {
     margin-top: 16px;
     font-size: 24px;
-  }
-
-  &__main {
-    padding: 24px;
-    border: 1px solid #eaeaea;
-    border-radius: 4px;
-    background-color: white;
-  }
-
-  &__heading {
-    font-size: 24px;
-    margin-bottom: 16px;
-  }
-
-  &__notice {
-    font-size: 16px;
-    margin-bottom: 16px;
-    color: rgba(#000000, 0.5);
   }
 }

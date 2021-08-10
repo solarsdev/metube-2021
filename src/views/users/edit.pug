@@ -11,9 +11,9 @@ block content
           i.fa.fa-camera.avatar-for__input-icon
         input.avatar-form__input(type="file", name="avatar", id="avatar", accept="image/*", onchange="form.submit()")
       h1.account__welcome-msg ようこそ、#{user.name}さん
-    .account__main
-      h1.account__heading 基本情報
-      p.account__notice 一部の情報は、MeTubeサービスを利用する他のユーザーに表示される場合があります。
+    .page-container__section
+      h1.page-container__heading 基本情報
+      p.page-container__notice 一部の情報は、MeTubeサービスを利用する他のユーザーに表示される場合があります。
       form.account__basic-info-form.form(method="post")
         .form__input-group
           input(type="hidden", name="_csrf", value=csrfToken)
@@ -21,9 +21,9 @@ block content
             span.form__label.form__label_required アカウント名
             input.form__input(type="text", name="name", placeholder="アカウント名", value=user.name, required=true)
           input.form__submit(type="submit", value="保存")
-    .account__main
-      h1.account__heading セキュリティー
-      p.account__notice パスワードを変更できます。現在のパスワードと新しいパスワードを入力してください。
+    .page-container__section
+      h1.page-container__heading セキュリティー
+      p.page-container__notice パスワードを変更できます。現在のパスワードと新しいパスワードを入力してください。
       form.account__password-form.form(action="/users/change-password", method="post")
         .form__input-group
           input(type="hidden", name="_csrf", value=csrfToken)
