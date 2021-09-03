@@ -1,11 +1,12 @@
 import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import 'express-async-errors';
 import flash from 'express-flash';
 import session from 'express-session';
 import morgan from 'morgan';
-import { db } from './db';
 import passport from 'passport';
+import { db } from './db';
 import './passport';
 import { csrfMiddleware, localMiddleware, setHeaderMiddleware } from './middlewares';
 
@@ -45,5 +46,10 @@ app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/videos', videoRouter);
 app.use('/', rootRouter);
+
+app.use((err, req, res, next) => {
+  res.status(500);
+  res.json({ error: err.message });
+});
 
 export default app;

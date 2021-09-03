@@ -1,9 +1,11 @@
 extends base.pug
-include mixins/video.pug
+include mixins/videoBlock.pug
 
 block content
   form(method="get")
     input(type="text", name="search_query")
     input(type="submit", value="Search")
   each video in videos
-    +video(video)
+    +videoBlock(video)
+  else
+    li nothing found.

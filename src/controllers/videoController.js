@@ -52,7 +52,10 @@ export const search = async (req, res) => {
         title: {
           $regex: new RegExp(search_query, 'i'),
         },
-      }).sort({ createdAt: 'desc' });
+        'fileInfo.job.status': 'Complete',
+      })
+        .populate('owner')
+        .sort({ createdAt: 'desc' });
     }
 
     return res.render('search', { pageTitle: '動画検索', videos });
