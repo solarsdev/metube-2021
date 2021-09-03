@@ -1,8 +1,10 @@
+import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import flash from 'express-flash';
 import session from 'express-session';
 import morgan from 'morgan';
+import { db } from './db';
 import passport from 'passport';
 import './passport';
 import { csrfMiddleware, localMiddleware, setHeaderMiddleware } from './middlewares';
@@ -21,7 +23,14 @@ app.set('view engine', 'pug');
 app.disable('etag');
 
 app.use(morgan('dev'));
-app.use(session({ secret: process.env.SESSION_KEY, resave: false, saveUninitialized: false }));
+app.use(
+  session({
+    secret: process.env.SESSION_KEY,
+    resave: false,
+    saveUninitialized: false,
+    store: db ? MongoStore.create({ client: db.getClient() }) : new MemoryStore(),
+  }),
+);
 app.use(flash());
 app.use(passport.initialize());
 app.use(express.urlencoded({ extended: true }));
