@@ -265,7 +265,7 @@ export const postUpload = (req, res) => {
       },
     });
 
-    return res.redirect(`/videos/${videoId}`);
+    return res.redirect(`/users/${res.locals.user._id}`);
   });
 };
 
